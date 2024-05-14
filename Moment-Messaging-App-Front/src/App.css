@@ -1,0 +1,69 @@
+:root {
+  --background-color: #F2F2F2;
+  --text-color: #000000;
+  --main-btn-bg: #000000;
+  --main-btn-text: #FFFFFF;
+  --btn-bg: inherit;
+  --btn-text: #D8D8D8;
+  --btn-text-selected: #000000;
+  --gray-color: #D8D8D8;
+  --devider-color: #D8D8D8;
+  --input-bg: #FFFFFF;
+  --input-focus: #000000;
+}
+
+[data-theme='dark'] {
+  --background-color: #424242;
+  --text-color: #FFFFFF;
+  --main-btn-bg: #FFFFFF;
+  --main-btn-text: #000000;
+  --btn-bg: inherit;
+  --btn-text: #D8D8D8;
+  --btn-text-selected: #FFFFFF;
+  --gray-color: #D8D8D8;
+  --devider-color: #D8D8D8;
+  --input-bg: #2c2c2c;
+  --input-focus: #FFFFFF;
+}
+
+.App {
+  outline: 1px solid red;
+  display: grid;
+  grid-template-columns: 400px 1fr; /* 400px for the left cell, 1fr for the right cell */
+  min-height: 100vh;
+}
+
+h1{ 
+  font-family: Verdana, sans-serif;
+}
+
+/* Deviders */
+.Devider{ 
+  height: 1px;
+  background-color: var(--gray-color);
+  width: 90%;
+}
+
+.Navigator{ 
+  outline: 1px solid black;
+  margin: 10px;
+  margin-right: 5px;
+  border-radius: 10px;
+  /* display */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* colors */
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+
+.Body{ 
+  outline: 1px solid black;
+  margin: 10px;
+  margin-left: 5px;
+  border-radius: 10px;
+    /* colors */
+  background-color: var(--background-color);
+}

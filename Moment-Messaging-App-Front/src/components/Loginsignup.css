@@ -1,0 +1,58 @@
+.Loginsignup {
+
+    margin-top: 21.44px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Loginsignup .Form-BTN-CTR {
+    width: 90%;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 21.44px;
+}
+
+.Loginsignup .Form-BTN-CTR .Form-BTN { 
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
+    border: none;
+}
+.Loginsignup .Form-BTN-CTR .Form-BTN-Selected { 
+    background-color: var(--btn-bg);
+    color: var(--btn-text-selected);
+    border: none;
+    font-weight: bold;
+}
+
+
+.Loginsignup form { 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+
+.Loginsignup form input { 
+    padding: 10px;
+    border: none;
+    border-radius: 25px;
+    background-color: var(--input-bg);
+    width: 90%;
+}
+
+.Loginsignup form input:focus { 
+    outline: 3px solid var(--input-focus)
+}
+
+.Loginsignup .Form-Sumbit-BTN{ 
+    width: fit-content;
+    border-radius: 25px;
+    padding: 5px;
+    border: none;
+    background-color: var(--main-btn-bg);
+    color: var(--main-btn-text);
+
+}
