@@ -58,6 +58,14 @@ h1{
   color: var(--text-color);
 }
 
+/* Dark mode toggle btn  */
+.Dark-Mode-Toggle-BTN{ 
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  transform: scale(0.5);
+}
+
 
 .Body{ 
   outline: 1px solid black;

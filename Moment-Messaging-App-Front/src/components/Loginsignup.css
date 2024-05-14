@@ -41,6 +41,7 @@
     border-radius: 25px;
     background-color: var(--input-bg);
     width: 90%;
+    color: var(--text-color);
 }
 
 .Loginsignup form input:focus { 
@@ -50,7 +51,7 @@
 .Loginsignup .Form-Sumbit-BTN{ 
     width: fit-content;
     border-radius: 25px;
-    padding: 5px;
+    padding: 7px;
     border: none;
     background-color: var(--main-btn-bg);
     color: var(--main-btn-text);

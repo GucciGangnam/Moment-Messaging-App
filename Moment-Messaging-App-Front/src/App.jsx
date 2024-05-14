@@ -37,10 +37,15 @@ export const App = () => {
         <h1>Moments</h1>
         <div className="Devider"></div>
         <Loginsignup />
+        <img className="Dark-Mode-Toggle-BTN"
+        onClick={toggleTheme}
+        src={isDarkMode ? "/Sun.png" : "/Moon.png"}
+        alt={isDarkMode ? "Sun" : "Moon"}
+        ></img>
       </div>
 
       <div className="Body">
-        <button onClick={toggleTheme}>Toggle theme</button>
+        
       </div>
 
     </div>
