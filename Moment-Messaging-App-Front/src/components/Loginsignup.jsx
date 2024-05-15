@@ -58,7 +58,7 @@ export const Loginsignup = () => {
     return (
         <div className="Loginsignup">
             <div className="Header">
-                <h1>Moments</h1>
+                <h1>Moment</h1>
                 <div className="Devider"></div>
             </div>
 

@@ -35,18 +35,18 @@ export const App = () => {
   return (
     <div className="App">
 
-  
-        <Loginsignup />
-        {/* <Navigator/> */}
 
-        <Landing/>
+      {/* <Loginsignup /> */}
+      <Navigator />
 
-                {/* dark mode toggle  */}
-                <img className="Dark-Mode-Toggle-BTN"
+      <Landing />
+
+      {/* dark mode toggle  */}
+      <img className="Dark-Mode-Toggle-BTN"
         onClick={toggleTheme}
         src={isDarkMode ? "/Sun.png" : "/Moon.png"}
         alt={isDarkMode ? "Sun" : "Moon"}
-        ></img>
+      ></img>
     </div>
   );
 };

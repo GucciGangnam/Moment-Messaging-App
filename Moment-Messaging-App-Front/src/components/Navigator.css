@@ -1,10 +1,87 @@
-.Navigator{ 
+.Navigator {
+    /* outline: 1px dashed pink; */
     max-height: 100%;
     margin: 10px;
-    background-color: blue;
+    margin-right: 5px;
+    border-radius: 10px;
+    background-color: var(--background-color);
 
     display: flex;
     flex-direction: column;
+    align-items: center;
     overflow: hidden;
-    background-color: var(--background-color);
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.Navigator .Header {
+    /* outline: 1px dashed blue; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.Navigator .Buttons {
+    /* outline: 1px dashed green; */
+    margin-top: 21.44px;
+    margin-bottom: 21.44px;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.Navigator .Button{ 
+    fill: var(--img-deselected);
+}
+
+.Navigator .Button-selected{ 
+    fill: var(--img-selected);
+}
+
+.Navigator .Content {
+    min-height: 70px;
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+}
+
+.Navigator .Title {
+    margin-bottom: 7px;
+}
+
+.Navigator .Search {
+    margin: 3px;
+    margin-bottom: 10px;
+    width: 70%;
+    padding: 10px;
+    border: none;
+    border-radius: 25px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+}
+
+.Navigator .Search:focus {
+    outline: 3px solid var(--input-focus)
+}
+
+
+.Navigator .Contact {
+    background-color: var(--background-color-2);
+    padding: 10px;
+    border-radius: 10px;
+    width: 90%;
+    color: var(--text-color-2);
+}
+
+.Navigator .Bottom {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    border-radius: 25px;
+    height: 100px;
 }

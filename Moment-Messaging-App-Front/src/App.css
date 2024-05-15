@@ -13,6 +13,8 @@
   --input-focus: #000000;
   --img-selected: #000000;
   --img-deselected: #D8D8D8;
+  --background-color-2: #dddddd;
+  --text-color-2: #808080;
 }
 
 [data-theme='dark'] {
@@ -30,6 +32,8 @@
   --input-focus: #FFFFFF;
   --img-selected: #FFFFFF;
   --img-deselected: #787878;
+  --background-color-2: #535353;
+  --text-color-2: #808080;
 }
 
 .App {
@@ -39,6 +43,7 @@
   display: grid;
   grid-template-columns: 400px 1fr;
   color: var(--text-color);
+  font-family: Calibri, sans-serif;
 }
 
 

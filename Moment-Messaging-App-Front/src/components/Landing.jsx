@@ -10,7 +10,8 @@ import "./Landing.css"
 export const Landing = () => {
     return (
         <div className="Landing">
-            Hello from landing
+            <h1>Moment</h1>
+            <img src="/Picture 1.png"></img>
         </div>
     )
 }
