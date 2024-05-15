@@ -10,6 +10,8 @@
   --devider-color: #D8D8D8;
   --input-bg: #FFFFFF;
   --input-focus: #000000;
+  --img-selected: #000000;
+  --img-deselected: #D8D8D8;
 }
 
 [data-theme='dark'] {
@@ -24,31 +26,38 @@
   --devider-color: #D8D8D8;
   --input-bg: #2c2c2c;
   --input-focus: #FFFFFF;
+  --img-selected: #FFFFFF;
+  --img-deselected: #787878;
 }
 
 .App {
-  outline: 1px solid red;
+  background-color: red;
   display: grid;
-  grid-template-columns: 400px 1fr; /* 400px for the left cell, 1fr for the right cell */
+  grid-template-columns: 400px 1fr;
   min-height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  font-family: "Century Gothic", "Futura", "URW Gothic L", "Avantgarde", "Trebuchet MS", sans-serif;
 }
 
-h1{ 
-  font-family: Verdana, sans-serif;
+
+h1 {
+  font-family: "Century Gothic", "Futura", "URW Gothic L", "Avantgarde", "Trebuchet MS", sans-serif;
 }
 
 /* Deviders */
-.Devider{ 
+.Devider {
   height: 1px;
   background-color: var(--gray-color);
   width: 90%;
 }
 
-.Navigator{ 
-  outline: 1px solid black;
+.Sidebar {
   margin: 10px;
   margin-right: 5px;
   border-radius: 10px;
+  height: calc(100% - 40px);
+  padding: 10px;
   /* display */
   display: flex;
   flex-direction: column;
@@ -59,7 +68,7 @@ h1{
 }
 
 /* Dark mode toggle btn  */
-.Dark-Mode-Toggle-BTN{ 
+.Dark-Mode-Toggle-BTN {
   position: absolute;
   bottom: 5px;
   left: 5px;
@@ -67,11 +76,12 @@ h1{
 }
 
 
-.Body{ 
+.Body {
   outline: 1px solid black;
   margin: 10px;
   margin-left: 5px;
   border-radius: 10px;
-    /* colors */
+  max-height: 100%;
+  /* colors */
   background-color: var(--background-color);
 }

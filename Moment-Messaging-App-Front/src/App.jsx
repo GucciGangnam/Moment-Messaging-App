@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 // Pages
 // Components 
 import { Loginsignup } from "./components/Loginsignup.jsx"
+import { Landing } from "./components/Landing.jsx";
+// import { Navigator } from "./components/Navigator.jsx";
 
 
 // COMPONENT
@@ -33,18 +35,21 @@ export const App = () => {
   return (
     <div className="App">
 
-      <div className="Navigator">
-        <h1>Moments</h1>
-        <div className="Devider"></div>
+      <div className="Sidebar">
         <Loginsignup />
-        <img className="Dark-Mode-Toggle-BTN"
+        {/* <Navigator/> */}
+
+
+        {/* dark mode toggle  */}
+        {/* <img className="Dark-Mode-Toggle-BTN"
         onClick={toggleTheme}
         src={isDarkMode ? "/Sun.png" : "/Moon.png"}
         alt={isDarkMode ? "Sun" : "Moon"}
-        ></img>
+        ></img> */}
       </div>
 
       <div className="Body">
+        {/* <Landing/> */}
         
       </div>
 

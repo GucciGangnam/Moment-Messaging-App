@@ -9,13 +9,60 @@ import "./Loginsignup.css"
 // COMPONENT
 export const Loginsignup = () => {
     // STATES
+    // Display sign up or log in
     const [formState, setFormState] = useState("signup")
+
+    // State for Sign Up form data
+    const [signUpData, setSignUpData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        password: ''
+    });
+
+    // State for Log In form data
+    const [loginData, setLoginData] = useState({
+        email: '',
+        password: ''
+    });
+
+    // Handlers for form input changes
+    const handleSignUpChange = (e) => {
+        const { name, value } = e.target;
+        setSignUpData((prevData) => ({
+            ...prevData,
+            [name]: value
+        }));
+    };
+
+    const handleLoginChange = (e) => {
+        const { name, value } = e.target;
+        setLoginData((prevData) => ({
+            ...prevData,
+            [name]: value
+        }));
+    };
+
+    // Handlers for form submissions
+    const handleSignUpSubmit = (e) => {
+        e.preventDefault();
+        console.log("Sign Up Data:", signUpData);
+    };
+
+    const handleLoginSubmit = (e) => {
+        e.preventDefault();
+        console.log("Login Data:", loginData);
+    };
+
 
 
     return (
         <div className="Loginsignup">
+            <h1>Moments</h1>
+            <div className="Devider"></div>
             <div className="Form-BTN-CTR">
-            <button
+                <button
                     className={formState === "signup" ? "Form-BTN-Selected" : "Form-BTN"}
                     onClick={() => setFormState("signup")}
                 >
@@ -30,12 +77,39 @@ export const Loginsignup = () => {
             </div>
 
             {formState === "signup" && (
-                <form>
-                    <input placeholder="First Name" />
-                    <input placeholder="Last Name" />
-                    <input placeholder="Email" />
-                    <input placeholder="Phone" />
-                    <input placeholder="Password" />
+                <form onSubmit={handleSignUpSubmit}>
+                    <input
+                        name="firstName"
+                        value={signUpData.firstName}
+                        onChange={handleSignUpChange}
+                        placeholder="First Name"
+                    />
+                    <input
+                        name="lastName"
+                        value={signUpData.lastName}
+                        onChange={handleSignUpChange}
+                        placeholder="Last Name"
+                    />
+                    <input
+                        type="email"
+                        name="email"
+                        value={signUpData.email}
+                        onChange={handleSignUpChange}
+                        placeholder="Email"
+                    />
+                    <input
+                        name="phone"
+                        value={signUpData.phone}
+                        onChange={handleSignUpChange}
+                        placeholder="Phone"
+                    />
+                    <input
+                        type="password"
+                        name="password"
+                        value={signUpData.password}
+                        onChange={handleSignUpChange}
+                        placeholder="Password"
+                    />
                     <button className="Form-Sumbit-BTN" type="submit">
                         Sign Up
                     </button>
@@ -43,14 +117,27 @@ export const Loginsignup = () => {
             )}
 
             {formState === "login" && (
-                <form>
-                    <input placeholder="Email" />
-                    <input placeholder="Password" />
+                <form onSubmit={handleLoginSubmit}>
+                    <input
+                        type="email"
+                        name="email"
+                        value={loginData.email}
+                        onChange={handleLoginChange}
+                        placeholder="Email"
+                    />
+                    <input
+                        type="password"
+                        name="password"
+                        value={loginData.password}
+                        onChange={handleLoginChange}
+                        placeholder="Password"
+                    />
                     <button className="Form-Sumbit-BTN" type="submit">
                         Login
                     </button>
                 </form>
             )}
+
         </div>
     )
 }
