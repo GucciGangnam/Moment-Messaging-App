@@ -1,0 +1,10 @@
+.Navigator{ 
+    max-height: 100%;
+    margin: 10px;
+    background-color: blue;
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: var(--background-color);
+}

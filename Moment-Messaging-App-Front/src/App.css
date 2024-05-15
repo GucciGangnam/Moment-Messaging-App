@@ -1,4 +1,5 @@
 :root {
+  --app-bg: white;
   --background-color: #F2F2F2;
   --text-color: #000000;
   --main-btn-bg: #000000;
@@ -15,6 +16,7 @@
 }
 
 [data-theme='dark'] {
+  --app-bg: rgb(28, 28, 28);
   --background-color: #424242;
   --text-color: #FFFFFF;
   --main-btn-bg: #FFFFFF;
@@ -31,13 +33,12 @@
 }
 
 .App {
-  background-color: red;
+  background-color: var(--app-bg);
+  width: 100vw;
+  height: 100vh;
   display: grid;
   grid-template-columns: 400px 1fr;
-  min-height: 100vh;
-  max-height: 100vh;
-  overflow: hidden;
-  font-family: "Century Gothic", "Futura", "URW Gothic L", "Avantgarde", "Trebuchet MS", sans-serif;
+  color: var(--text-color);
 }
 
 
@@ -52,21 +53,6 @@ h1 {
   width: 90%;
 }
 
-.Sidebar {
-  margin: 10px;
-  margin-right: 5px;
-  border-radius: 10px;
-  height: calc(100% - 40px);
-  padding: 10px;
-  /* display */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* colors */
-  background-color: var(--background-color);
-  color: var(--text-color);
-}
-
 /* Dark mode toggle btn  */
 .Dark-Mode-Toggle-BTN {
   position: absolute;
@@ -76,12 +62,3 @@ h1 {
 }
 
 
-.Body {
-  outline: 1px solid black;
-  margin: 10px;
-  margin-left: 5px;
-  border-radius: 10px;
-  max-height: 100%;
-  /* colors */
-  background-color: var(--background-color);
-}

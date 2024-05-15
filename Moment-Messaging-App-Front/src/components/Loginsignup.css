@@ -1,26 +1,44 @@
 .Loginsignup {
-    width: 100%;
-    overflow: hidden;
-    /* width: 100%; */
+    /* outline: 1px dashed pink; */
+    max-height: 100%;
+    margin: 10px;
+    margin-right: 5px;
+    border-radius: 10px;
+    background-color: var(--background-color);
+
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+
 }
 
-.Loginsignup .Form-BTN-CTR {
-    width: 90%;
+.Loginsignup .Header {
+    /* outline: 1px dashed blue; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.Loginsignup .Buttons {
+    /* outline: 1px dashed green; */
+    margin-top: 21.44px;
+    margin-bottom: 21.44px;
     display: flex;
     justify-content: space-around;
-    margin-bottom: 21.44px;
+    width: 100%;
 }
 
-.Loginsignup .Form-BTN-CTR .Form-BTN {
+.Loginsignup .Form-BTN {
     background-color: var(--btn-bg);
     color: var(--btn-text);
     border: none;
 }
 
-.Loginsignup .Form-BTN-CTR .Form-BTN-Selected {
+.Loginsignup .Form-BTN-Selected {
     background-color: var(--btn-bg);
     color: var(--btn-text-selected);
     border: none;
@@ -29,6 +47,8 @@
 
 
 .Loginsignup form {
+    padding: 3px;
+    overflow: scroll;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -36,16 +56,17 @@
     gap: 10px;
 }
 
-.Loginsignup form input {
+
+.Loginsignup input {
+    width: 90%;
     padding: 10px;
     border: none;
     border-radius: 25px;
     background-color: var(--input-bg);
-    width: 90%;
     color: var(--text-color);
 }
 
-.Loginsignup form input:focus {
+.Loginsignup input:focus{ 
     outline: 3px solid var(--input-focus)
 }
 
@@ -56,5 +77,4 @@
     border: none;
     background-color: var(--main-btn-bg);
     color: var(--main-btn-text);
-
 }

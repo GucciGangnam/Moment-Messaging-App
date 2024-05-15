@@ -1,18 +1,7 @@
-.Landing {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-
-}
-
-.Landing h1 {
-    font-family: "Century Gothic", "Futura", "URW Gothic L", "Avantgarde", "Trebuchet MS", sans-serif;
-    font-size: 4rem;
-}
-
-.Landing img {
-    width: 100%;
-    max-width: 700px;
+.Landing{ 
+    margin: 10px;
+    margin-left: 5px;
+    border-radius: 10px;
+    padding: 10px;
+    background-color:var(--background-color)
 }
