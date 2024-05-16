@@ -68,24 +68,63 @@ export const Navigator = () => {
                 placeholder="Search xxx">
             </input>
             <div className="Content">
-
-
-                <div className="Contact">
-                    First Last
-                </div>
-                <div className="Contact">
-                    First Last
-                </div>
-                <div className="Contact">
-                    First Last
-                </div>
-
-                
+            {title === 'Contacts' ? (
+                    <>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                        <div className="Contact">First Last</div>
+                    </>
+                ) : (
+                    <>
+                        <div className="Group">Group Name</div>
+                        <div className="Group">Group Name</div>
+                        <div className="Group">Group Name</div>
+                        <div className="Group">Group Name</div>
+                        <div className="Group">Group Name</div>
+                        <div className="Group">Group Name</div>
+                        <div className="Group">Group Name</div>
+                        <div className="Group">Group Name</div>
+                        <div className="Group">Group Name</div>
+                    </>
+                )}
             </div>
             <div className="Bottom">
-                <button></button>
-                <button></button>
-                <button></button>
+                <button>Theme</button>
+
+                <button>Add Contact</button>
+                <button>New Group</button>
+
+
+                <button>Log</button>
+
+                
             </div>
 
         </div>
