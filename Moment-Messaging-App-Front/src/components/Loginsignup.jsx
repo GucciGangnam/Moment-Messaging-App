@@ -7,7 +7,7 @@ import { useState } from "react";
 
 
 // COMPONENT
-export const Loginsignup = () => {
+export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
     // STATES
     // Display sign up or log in
     const [formState, setFormState] = useState("signup")
@@ -78,66 +78,75 @@ export const Loginsignup = () => {
             </div>
 
             {formState === "signup" && (
-                    <form onSubmit={handleSignUpSubmit}>
-                        <input
-                            name="firstName"
-                            value={signUpData.firstName}
-                            onChange={handleSignUpChange}
-                            placeholder="First Name"
-                        />
-                        <input
-                            name="lastName"
-                            value={signUpData.lastName}
-                            onChange={handleSignUpChange}
-                            placeholder="Last Name"
-                        />
-                        <input
-                            type="email"
-                            name="email"
-                            value={signUpData.email}
-                            onChange={handleSignUpChange}
-                            placeholder="Email"
-                        />
-                        <input
-                            name="phone"
-                            value={signUpData.phone}
-                            onChange={handleSignUpChange}
-                            placeholder="Phone"
-                        />
-                        <input
-                            type="password"
-                            name="password"
-                            value={signUpData.password}
-                            onChange={handleSignUpChange}
-                            placeholder="Password"
-                        />
-                        <button className="Form-Sumbit-BTN" type="submit">
-                            Sign Up
-                        </button>
-                    </form>
-                )}
+                <form onSubmit={handleSignUpSubmit}>
+                    <input
+                        name="firstName"
+                        value={signUpData.firstName}
+                        onChange={handleSignUpChange}
+                        placeholder="First Name"
+                    />
+                    <input
+                        name="lastName"
+                        value={signUpData.lastName}
+                        onChange={handleSignUpChange}
+                        placeholder="Last Name"
+                    />
+                    <input
+                        type="email"
+                        name="email"
+                        value={signUpData.email}
+                        onChange={handleSignUpChange}
+                        placeholder="Email"
+                    />
+                    <input
+                        name="phone"
+                        value={signUpData.phone}
+                        onChange={handleSignUpChange}
+                        placeholder="Phone"
+                    />
+                    <input
+                        type="password"
+                        name="password"
+                        value={signUpData.password}
+                        onChange={handleSignUpChange}
+                        placeholder="Password"
+                    />
+                    <button className="Form-Sumbit-BTN" type="submit">
+                        Sign Up
+                    </button>
+                </form>
+            )}
 
-                {formState === "login" && (
-                    <form onSubmit={handleLoginSubmit}>
-                        <input
-                            type="email"
-                            name="email"
-                            value={loginData.email}
-                            onChange={handleLoginChange}
-                            placeholder="Email"
-                        />
-                        <input
-                            type="password"
-                            name="password"
-                            value={loginData.password}
-                            onChange={handleLoginChange}
-                            placeholder="Password"
-                        />
-                        <button className="Form-Sumbit-BTN" type="submit">
-                            Login
-                        </button>
-                    </form>
-                )}
+            {formState === "login" && (
+                <form onSubmit={handleLoginSubmit}>
+                    <input
+                        type="email"
+                        name="email"
+                        value={loginData.email}
+                        onChange={handleLoginChange}
+                        placeholder="Email"
+                    />
+                    <input
+                        type="password"
+                        name="password"
+                        value={loginData.password}
+                        onChange={handleLoginChange}
+                        placeholder="Password"
+                    />
+                    <button className="Form-Sumbit-BTN" type="submit">
+                        Login
+                    </button>
+                </form>
+            )}
 
-        </div>)
+            <div className="Bottom">
+                <img className="Dark-Mode-Toggle-BTN"
+                    onClick={toggleTheme}
+                    src={isDarkMode ? "/Sun.png" : "/Moon.png"}
+                    alt={isDarkMode ? "Sun" : "Moon"}
+                ></img>
+                
+            </div>
+        </div>
+    )
 }

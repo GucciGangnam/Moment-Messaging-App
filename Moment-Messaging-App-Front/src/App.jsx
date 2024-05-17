@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { Loginsignup } from "./components/Loginsignup.jsx"
 import { Landing } from "./components/Landing.jsx";
 import { Navigator } from "./components/Navigator.jsx";
+import { Room } from "./components/Room.jsx";
 
 
 // COMPONENT
@@ -35,18 +36,19 @@ export const App = () => {
   return (
     <div className="App">
 
+{/* LEFT */}
+      {/* <Loginsignup
+      toggleTheme={toggleTheme}
+      isDarkMode={isDarkMode}/> */}
 
-      {/* <Loginsignup /> */}
-      <Navigator />
+      <Navigator
+      toggleTheme={toggleTheme}
+      isDarkMode={isDarkMode}/>
 
-      <Landing />
+{/* RIGHT */}
+      {/* <Landing /> */}
+      <Room/>
 
-      {/* dark mode toggle  */}
-      <img className="Dark-Mode-Toggle-BTN"
-        onClick={toggleTheme}
-        src={isDarkMode ? "/Sun.png" : "/Moon.png"}
-        alt={isDarkMode ? "Sun" : "Moon"}
-      ></img>
     </div>
   );
 };
