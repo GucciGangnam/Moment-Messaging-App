@@ -16,7 +16,7 @@
     width: 100%;
     height: 85px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     gap: 20px;
     align-items: center;
 }
@@ -90,7 +90,7 @@
 
 /* MAIN */
 .Room .Main {
-    /* outline: 1px solid blue; */
+    outline: 1px solid blue;
     width: 100%;
     height: 100%;
 

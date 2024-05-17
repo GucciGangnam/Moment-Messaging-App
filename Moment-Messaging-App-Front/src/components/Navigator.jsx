@@ -29,6 +29,7 @@ export const Navigator = ({ toggleTheme, isDarkMode }) => {
 
     return (
         <div className="Navigator">
+
             <div className="Header">
                 <h1>Moment</h1>
                 <div className="Devider"></div>

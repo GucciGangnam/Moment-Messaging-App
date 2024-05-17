@@ -46,6 +46,20 @@
   grid-template-columns: 400px 1fr;
   color: var(--text-color);
   font-family: Calibri, sans-serif;
+  position: relative;
+}
+
+.Layout-BTN{ 
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  fill: none;
+  stroke: var(--img-deselected)
+}
+
+.Layout-BTN:hover{ 
+  fill: none;
+  stroke: var(--img-selected)
 }
 
 
