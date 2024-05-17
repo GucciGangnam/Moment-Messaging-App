@@ -46,17 +46,17 @@ export const App = () => {
       </svg>
 
       {/* LEFT */}
-      {/* <Loginsignup
+      <Loginsignup
       toggleTheme={toggleTheme}
-      isDarkMode={isDarkMode}/> */}
+      isDarkMode={isDarkMode}/>
 
-      <Navigator
+      {/* <Navigator
         toggleTheme={toggleTheme}
-        isDarkMode={isDarkMode} />
+        isDarkMode={isDarkMode} /> */}
 
       {/* RIGHT */}
-      {/* <Landing /> */}
-      <Room />
+      <Landing />
+      {/* <Room /> */}
 
     </div>
   );

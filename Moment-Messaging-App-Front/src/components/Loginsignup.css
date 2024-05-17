@@ -74,6 +74,12 @@
 .Loginsignup input:focus{ 
     outline: 3px solid var(--input-focus)
 }
+.Loginsignup .Input-invalid{ 
+    outline: 2px solid rgb(255, 74, 74);;
+}
+.Loginsignup .Input-invalid:focus{ 
+    outline: 2px solid rgb(255, 74, 74);;
+}
 
 .Loginsignup .Form-Sumbit-BTN {
     width: fit-content;

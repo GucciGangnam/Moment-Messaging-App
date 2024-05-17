@@ -9,6 +9,8 @@ import { useState } from "react";
 // COMPONENT
 export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
     // STATES
+    // Do password match
+    const [passMatch, setPassMatch] = useState(true);
     // Display sign up or log in
     const [formState, setFormState] = useState("signup")
 
@@ -18,7 +20,8 @@ export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
         lastName: '',
         email: '',
         phone: '',
-        password: ''
+        password: '',
+        confirmPassword: ''
     });
 
     // State for Log In form data
@@ -30,10 +33,21 @@ export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
     // Handlers for form input changes
     const handleSignUpChange = (e) => {
         const { name, value } = e.target;
-        setSignUpData((prevData) => ({
-            ...prevData,
-            [name]: value
-        }));
+        setSignUpData((prevData) => {
+            const updatedData = {
+                ...prevData,
+                [name]: value
+            };
+
+            // Check if passwords match and are non-empty
+            if (updatedData.password && updatedData.confirmPassword) {
+                setPassMatch(updatedData.password === updatedData.confirmPassword);
+            } else {
+                setPassMatch(true); // Set to true when either field is empty
+            }
+
+            return updatedData;
+        });
     };
 
     const handleLoginChange = (e) => {
@@ -47,7 +61,9 @@ export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
     // Handlers for form submissions
     const handleSignUpSubmit = (e) => {
         e.preventDefault();
-        console.log("Sign Up Data:", signUpData);
+        if (signUpData.password === signUpData.confirmPassword) {
+            console.log("Sign Up Data:", signUpData);
+        }
     };
 
     const handleLoginSubmit = (e) => {
@@ -80,23 +96,36 @@ export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
             {formState === "signup" && (
                 <form onSubmit={handleSignUpSubmit}>
                     <input
+                        type="text"
+                        minLength={1}
+                        maxLength={30}
                         name="firstName"
                         value={signUpData.firstName}
                         onChange={handleSignUpChange}
-                        placeholder="First Name"
+                        placeholder="First Name*"
+                        pattern="[A-Za-z\s]+" // only allows letters and spaces
+                        aria-label="First Name"
+                        required
                     />
                     <input
+                        type="text"
+                        minLength={1}
+                        maxLength={30}
                         name="lastName"
                         value={signUpData.lastName}
                         onChange={handleSignUpChange}
-                        placeholder="Last Name"
+                        placeholder="Last Name*"
+                        pattern="[A-Za-z\s]+" // only allows letters and spaces
+                        aria-label="Last name"
+                        required
                     />
                     <input
                         type="email"
                         name="email"
                         value={signUpData.email}
                         onChange={handleSignUpChange}
-                        placeholder="Email"
+                        placeholder="Email*"
+                        required
                     />
                     <input
                         name="phone"
@@ -105,11 +134,22 @@ export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
                         placeholder="Phone"
                     />
                     <input
+                        minLength={8}
                         type="password"
                         name="password"
                         value={signUpData.password}
                         onChange={handleSignUpChange}
-                        placeholder="Password"
+                        placeholder="Password*"
+                        required
+                    />
+                    <input
+                        className={!passMatch ? 'Input-invalid' : ''}
+                        type="password"
+                        name="confirmPassword"
+                        value={signUpData.confirmPassword}
+                        onChange={handleSignUpChange}
+                        placeholder="Confirm Password*"
+                        required
                     />
                     <button className="Form-Sumbit-BTN" type="submit">
                         Sign Up
@@ -145,7 +185,7 @@ export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
                     src={isDarkMode ? "/Sun.png" : "/Moon.png"}
                     alt={isDarkMode ? "Sun" : "Moon"}
                 ></img>
-                
+
             </div>
         </div>
     )
