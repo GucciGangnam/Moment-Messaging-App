@@ -165,6 +165,7 @@ export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
                         value={loginData.email}
                         onChange={handleLoginChange}
                         placeholder="Email"
+                        required
                     />
                     <input
                         type="password"
@@ -172,6 +173,7 @@ export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
                         value={loginData.password}
                         onChange={handleLoginChange}
                         placeholder="Password"
+                        required
                     />
                     <button className="Form-Sumbit-BTN" type="submit">
                         Login
