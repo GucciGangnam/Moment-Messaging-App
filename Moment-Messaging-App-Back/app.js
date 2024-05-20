@@ -14,6 +14,17 @@ require('dotenv').config();
 
 var app = express();
 
+// CORS setup
+const corsOptions = {
+  origin: '*', // Allowed origin
+  allowedHeaders: ['Authorization', 'Content-Type'], // Allowed headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+  credentials: true, // Allow cookies or other credentials to be included in CORS requests
+  preflightContinue: false, // Disable preflight requests caching
+  optionsSuccessStatus: 204 // Set the preflight response status code
+};
+app.use(cors(corsOptions));
+
 // SET MONGO CONNECTION //
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);

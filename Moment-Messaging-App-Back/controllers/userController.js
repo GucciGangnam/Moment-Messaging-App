@@ -28,7 +28,11 @@ exports.user_create = [
         .matches(/^[A-Za-z\s]+$/, 'g')
         .withMessage('First name must only contain letters and spaces')
         .notEmpty()
-        .withMessage('First name is required'),
+        .withMessage('First name is required')
+        .custom((value, { req }) => {
+            req.body.firstName = value.charAt(0).toUpperCase() + value.slice(1);
+            return true;
+        }),
 
     body("lastName")
         .trim()
@@ -37,7 +41,11 @@ exports.user_create = [
         .matches(/^[A-Za-z\s]+$/, 'g')
         .withMessage('Last name must only contain letters and spaces')
         .notEmpty()
-        .withMessage('Last name is required'),
+        .withMessage('Last name is required')
+        .custom((value, { req }) => {
+            req.body.lastName = value.charAt(0).toUpperCase() + value.slice(1);
+            return true;
+        }),
 
     body("email")
         .trim()
@@ -92,17 +100,17 @@ exports.user_create = [
         // Create new user
         const newUser = new User({
             ID: userID,
-            FIRST_NAME: req.body.firstName,
-            LAST_NAME: req.body.lastName,
+            FIRST_NAME: req.body.firstName.charAt(0).toUpperCase() + req.body.firstName.slice(1),
+            LAST_NAME: req.body.lastName.charAt(0).toUpperCase() + req.body.lastName.slice(1),
             PHONE: req.body.phone,
             EMAIL: req.body.email,
             PASSWORD: req.body.password
         })
-        try{ 
+        try {
             console.log(newUser);
             await newUser.save();
-            return res.status(200).json({ msg: 'New user created'});
-        } catch (error){ 
+            return res.status(200).json({ msg: 'New user created' });
+        } catch (error) {
             console.error("failed to create new user");
             return res.status(500).json({ errors: [{ msg: 'Failed to create new user' }] });
         }

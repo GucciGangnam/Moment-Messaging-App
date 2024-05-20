@@ -2,9 +2,9 @@
 // Styles
 import "./Loginsignup.css"
 // React
-import { useState } from "react";
-
-
+import { useEffect, useState } from "react";
+// variables 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 // COMPONENT
 export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
@@ -59,14 +59,50 @@ export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
     };
 
     // Handlers for form submissions
-    const handleSignUpSubmit = (e) => {
+    // STATES 
+    const [signUpErrors, setSignUpErrors] = useState('');
+    const [signUpEmailPlaceholder, setSignUpEmailPlaceholder] = useState('Email*');
+
+    // DELETE ME 
+    // useEffect(() => { 
+    //     alert(signUpErrors.errors[0].msg);
+    // },[signUpErrors])
+    
+    // FUNCTION
+    const handleSignUpSubmit = async(e) => {
         e.preventDefault();
         if (signUpData.password === signUpData.confirmPassword) {
             console.log("Sign Up Data:", signUpData);
+            // make appst request to URL/users
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(signUpData)
+            };
+            try {
+                const response = await fetch(`${backendUrl}/users`, requestOptions);
+                const responseData = await response.json();
+                if (!response.ok) {
+                    console.log('Response NOT OK!')
+                    console.log(responseData)
+                    setSignUpEmailPlaceholder(`${signUpData.email}` +' '+ responseData.errors[0].msg.split(' ').slice(1).join(' '));
+                    setSignUpData((prevData) => ({
+                        ...prevData,
+                        email: '',
+                    }));
+                } else {
+                    console.log('Response OK!')
+                    console.log(responseData)
+                }
+            } catch (error) {
+                console.error(error)
+            }
         }
     };
 
-    const handleLoginSubmit = (e) => {
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
         console.log("Login Data:", loginData);
     };
@@ -124,7 +160,10 @@ export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
                         name="email"
                         value={signUpData.email}
                         onChange={handleSignUpChange}
-                        placeholder="Email*"
+                        placeholder={signUpEmailPlaceholder}
+                        style={{
+                            outline: signUpEmailPlaceholder !== "Email*" ? '2px solid rgb(255, 74, 74)' : 'none'
+                        }}
                         required
                     />
                     <input
