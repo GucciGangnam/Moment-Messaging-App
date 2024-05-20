@@ -146,13 +146,11 @@ exports.user_login = asyncHandler(async (req, res, next) => {
 
 // Read user
 exports.get_user_info = asyncHandler(async(req, res, next) => { 
-    console.log("hello world - from user info")
-    console.log(req.userId)
+    console.log("user info passed through")
     // Get user object 
     const userInfo = await User.findOne({ID: req.userId})
-    console.log(userInfo)
-
-})
+    res.status(200).json({userInfo: userInfo})
+});
 
 // Update 
 

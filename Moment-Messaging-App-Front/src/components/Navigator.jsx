@@ -9,14 +9,20 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 
 // COMPONENT
-export const Navigator = ({ toggleTheme, isDarkMode, setClientView }) => {
+export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout }) => {
 
     // Fetxh client data and load it into component
     // STATES 
-    // Loading
+    // Loading and errors 
     const [loading, setLoading] = useState(true);
+    const [fetchEror, setFetchError] = useState(false);
     // Client info 
     const [userData, setUserData] = useState({});
+
+    // ?? DELETE ME UE to log userData once got it 
+    useEffect(() => {
+        console.log(userData.userInfo)
+    }, [userData])
 
     // Fetch user info in Mount 
     useEffect(() => {
@@ -31,17 +37,26 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView }) => {
             },
         };
         // Fetch user info
-        const response = await fetch(`${backendUrl}/users/account`, requestOptions);
-        // If the fetch fail (because of Validation) log them out and: setClientView('login')
+        try {
+            const response = await fetch(`${backendUrl}/users/account`, requestOptions);
+            const responseData = await response.json();
+            if (!response.ok) {
+                if (response.status === 401) {
+                    handleLogout();
+                } else {
+                    console.log('response wasnt good sir'); // What could cause this?
+                }
+            } else {
+                // console.log(responseData); // DELETE ME
+                setUserData(responseData);
+                setLoading(false);
+            }
+        } catch (error) {
+            console.error(error);
+            // Set fetch error to true
+        }
     }
 
-
-
-    // LOGOUT
-    const handleLogout = () => {
-        localStorage.removeItem('UserAccessToken');
-        setClientView('login');
-    }
 
     // Navigator view controlls
     const [selectedButton, setSelectedButton] = useState(1);
@@ -126,35 +141,12 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView }) => {
                     <>
                         {/* for each contact in the user data - map each contact */}
                         <div className="Contact">Add Contact BTN</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
-                        <div className="Contact">First Last</div>
+                        {userData.userInfo.CONTACTS.map(contact => (
+                            <div key={contact.ID} className="Contact">
+                                {contact.FIRST_NAME} {contact.LAST_NAME}
+                            </div>
+                        ))}
+
                     </>
                 ) : title === 'Groups' ? (
                     <>
@@ -173,10 +165,9 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView }) => {
                     <>
                         {/* for each prfile info in the user data - map each profile info */}
                         <img src="/account-svgrepo-com.svg" className="Profile-picture-div"></img>
-                        <div className="Profile-div">Name: John Doe</div>
-                        <div className="Profile-div">Email: john.doe@example.com</div>
-                        <div className="Profile-div">Phone: 123-456-7890</div>
-                        <div className="Profile-div">Address: 123 Main St, Anytown, USA</div>
+                        <div className="Profile-div">{'Name: ' + userData.userInfo.FIRST_NAME + ' ' + userData.userInfo.LAST_NAME}</div>
+                        <div className="Profile-div">{'Email: ' + userData.userInfo.EMAIL}</div>
+                        <div className="Profile-div">{'Phone: ' + userData.userInfo.PHONE}</div>
                         {/* Add more profile details as needed */}
                     </>
                 ) : null}

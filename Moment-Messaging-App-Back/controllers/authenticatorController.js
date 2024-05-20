@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 // CONTROLLER //
 
-// Authenticate JWT
+// Authenticate JWT - middlewear - pre route
 exports.validateAccessToken = asyncHandler(async (req, res, next) => {
     // Get authorization header
     const clientAccessToken = req.headers.authorization
@@ -33,3 +33,20 @@ exports.validateAccessToken = asyncHandler(async (req, res, next) => {
     }
 })
 
+
+// Authenticate JWT - STABDALONE
+exports.validateAccessTokenStandAlone = asyncHandler(async (req, res, next) => {
+    const clientAccessToken = req.headers.authorization;
+    if (!clientAccessToken || !clientAccessToken.startsWith('Bearer ')) {
+        return res.status(401).json({ msg: 'Token missing or not formatted correctly' });
+    }
+    const token = clientAccessToken.split(' ')[1];
+    try {
+        const secretKey = process.env.API_SECURITY_KEY;
+        jwt.verify(token, secretKey); // Verify the token without assigning the result
+        return res.status(200).json({ msg: 'Token is valid' });
+    } catch (error) {
+        console.error(error);
+        return res.status(401).json({ msg: 'Unauthorized Access Token' });
+    }
+});

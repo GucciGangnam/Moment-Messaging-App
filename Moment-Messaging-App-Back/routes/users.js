@@ -13,6 +13,8 @@ router.post('/new', user_controller.user_create);
 
 // log in user //
 router.post('/login', user_controller.user_login);
+// Auto Login user if they revisit the site with a valid access token
+router.get('/login', authenticator_controller.validateAccessTokenStandAlone)
 
 // get user account info //
 router.get('/account', authenticator_controller.validateAccessToken, user_controller.get_user_info);
