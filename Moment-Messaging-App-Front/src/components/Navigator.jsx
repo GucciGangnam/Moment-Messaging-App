@@ -3,19 +3,53 @@
 import "./Navigator.css"
 // React 
 import { useEffect, useState } from "react";
+// Variables 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 
 
 // COMPONENT
-export const Navigator = ({ toggleTheme, isDarkMode }) => {
+export const Navigator = ({ toggleTheme, isDarkMode, setClientView }) => {
+
+    // Fetxh client data and load it into component
+    // STATES 
+    // Loading
+    const [loading, setLoading] = useState(true);
+    // Client info 
+    const [userData, setUserData] = useState({});
+
+    // Fetch user info in Mount 
+    useEffect(() => {
+        getUserAccountInfo();
+    }, [])
+    const getUserAccountInfo = async () => {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('UserAccessToken')}`
+            },
+        };
+        // Fetch user info
+        const response = await fetch(`${backendUrl}/users/account`, requestOptions);
+        // If the fetch fail (because of Validation) log them out and: setClientView('login')
+    }
+
+
+
+    // LOGOUT
+    const handleLogout = () => {
+        localStorage.removeItem('UserAccessToken');
+        setClientView('login');
+    }
+
+    // Navigator view controlls
     const [selectedButton, setSelectedButton] = useState(1);
     const [title, setTitle] = useState('Groups');
-
     // UE to log title when chajnged 
     useEffect(() => {
         console.log(title)
     }, [title])
-
     const handleButtonClick = (buttonId) => {
         setSelectedButton(buttonId);
         if (buttonId === 1) {
@@ -156,7 +190,7 @@ export const Navigator = ({ toggleTheme, isDarkMode }) => {
                 ></img>
 
                 <svg
-                    onClick={() => { console.log("Logout BTN clicked") }}
+                    onClick={handleLogout}
                     className="Log-out-btn"
                     width="30px"
                     height="30px"

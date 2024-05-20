@@ -17,6 +17,10 @@ export const App = () => {
   // STATES
   // Darkmode
   const [isDarkMode, setIsDarkMode] = useState(false);
+  // Client view 
+  const [clientView, setClientView] = useState('login') // login || navigator
+  // ClientAccessToken
+  const [userAccessToken, setUserAccessToken] = useState('')
 
   // BUTTON HANDLERS
   // Handle toggle dark theme
@@ -36,6 +40,7 @@ export const App = () => {
   return (
     <div className="App">
 
+      {/* layout button - absolute */}
       <svg
         onClick={() => { console.log("Layout BTN clicked") }}
         className="Layout-BTN"
@@ -46,17 +51,21 @@ export const App = () => {
       </svg>
 
       {/* LEFT */}
-      <Loginsignup
-      toggleTheme={toggleTheme}
-      isDarkMode={isDarkMode}/>
-
-      {/* <Navigator
-        toggleTheme={toggleTheme}
-        isDarkMode={isDarkMode} /> */}
+      {clientView === 'login' ? (
+        <Loginsignup 
+        toggleTheme={toggleTheme} 
+        isDarkMode={isDarkMode}
+        setClientView={setClientView} />
+      ) : (
+        <Navigator 
+        toggleTheme={toggleTheme} 
+        isDarkMode={isDarkMode}
+        setClientView={setClientView} />
+      )}
 
       {/* RIGHT */}
-      <Landing />
-      {/* <Room /> */}
+      {clientView === 'login' ? <Landing /> : <Room />}
+
 
     </div>
   );

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 // COMPONENT
-export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
+export const Loginsignup = ({ toggleTheme, isDarkMode, setClientView }) => {
     // STATES
     // Do password match
     const [passMatch, setPassMatch] = useState(true);
@@ -60,13 +60,7 @@ export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
 
     // Handlers for form submissions
     // STATES 
-    const [signUpErrors, setSignUpErrors] = useState('');
     const [signUpEmailPlaceholder, setSignUpEmailPlaceholder] = useState('Email*');
-
-    // DELETE ME 
-    // useEffect(() => { 
-    //     alert(signUpErrors.errors[0].msg);
-    // },[signUpErrors])
     
     // FUNCTION
     const handleSignUpSubmit = async(e) => {
@@ -82,7 +76,7 @@ export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
                 body: JSON.stringify(signUpData)
             };
             try {
-                const response = await fetch(`${backendUrl}/users`, requestOptions);
+                const response = await fetch(`${backendUrl}/users/new`, requestOptions);
                 const responseData = await response.json();
                 if (!response.ok) {
                     console.log('Response NOT OK!')
@@ -95,6 +89,11 @@ export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
                 } else {
                     console.log('Response OK!')
                     console.log(responseData)
+                    setFormState("login")
+                    setLoginData(prevState => ({
+                        ...prevState,
+                        email: signUpData.email
+                    }));
                 }
             } catch (error) {
                 console.error(error)
@@ -104,7 +103,28 @@ export const Loginsignup = ({ toggleTheme, isDarkMode }) => {
 
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
-        console.log("Login Data:", loginData);
+        // make appst request to URL/users
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(loginData)
+        };
+        try {
+        const response = await fetch(`${backendUrl}/users/login`, requestOptions);
+        const responseData = await response.json();
+        if (!response.ok){ 
+            console.log("not ok");
+            console.log(responseData)
+        } else { 
+            console.log("OK")
+            localStorage.setItem("UserAccessToken", responseData.accessToken)
+            setClientView('navigaotr')
+        }
+    } catch(error){ 
+        console.log(error);
+    }
     };
 
     return (

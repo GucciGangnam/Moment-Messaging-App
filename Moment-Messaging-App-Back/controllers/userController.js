@@ -9,6 +9,9 @@ const { v4: uuidv4 } = require('uuid');
 const bcrypt = require('bcryptjs');
 // Shemes
 const User = require("../models/user")
+// Import JWT
+const jwt = require("jsonwebtoken");
+
 
 
 // CONTROLLERS //
@@ -18,8 +21,6 @@ exports.users = (req, res, next) => {
 }
 
 // Create 
-
-
 exports.user_create = [
     body("firstName")
         .trim()
@@ -115,13 +116,43 @@ exports.user_create = [
             return res.status(500).json({ errors: [{ msg: 'Failed to create new user' }] });
         }
     })
-
 ]
 
+// Login 
+exports.user_login = asyncHandler(async (req, res, next) => {
+    // Does user exist?
+    const existingUser = await User.findOne({ EMAIL: req.body.email })
+    if (!existingUser) {
+        // Email not found
+        return res.status(400).json({ msg: "Email password combination don't match" });
+    }
+    // Compare passwords
+    const passwordMatch = await bcrypt.compare(req.body.password, existingUser.PASSWORD);
+    if (!passwordMatch) {
+        return res.status(400).json({ msg: "Email password combination don't match" });
+    }
+    // return res.status(200).json({ mag: 'yay' })
+    // Create a pay load 
+    const payload = {
+        userId: existingUser.ID
+    }
+    // Send access token 
+    const secretKey = process.env.API_SECURITY_KEY;
+    const accessToken = jwt.sign(payload, secretKey, { expiresIn: '60m' })
+    res.status(200).json({accessToken: accessToken})
+    return;
+});
 
 
+// Read user
+exports.get_user_info = asyncHandler(async(req, res, next) => { 
+    console.log("hello world - from user info")
+    console.log(req.userId)
+    // Get user object 
+    const userInfo = await User.findOne({ID: req.userId})
+    console.log(userInfo)
 
-// Read 
+})
 
 // Update 
 
