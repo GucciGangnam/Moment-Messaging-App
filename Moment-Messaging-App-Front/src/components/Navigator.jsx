@@ -11,22 +11,17 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 // COMPONENT
 export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout }) => {
 
-    // Fetxh client data and load it into component
     // STATES 
     // Loading and errors 
     const [loading, setLoading] = useState(true);
     const [fetchEror, setFetchError] = useState(false);
     // Client info 
     const [userData, setUserData] = useState({});
-    // ?? DELETE ME UE to log userData once got it 
-    useEffect(() => {
-        console.log(userData.userInfo)
-    }, [userData])
-
-    // Fetch user info in Mount 
+    // USEEFFECT - Run fetch on mount.
     useEffect(() => {
         getUserAccountInfo();
     }, [])
+    // FETCH user info and save it to userData state.
     const getUserAccountInfo = async () => {
         const requestOptions = {
             method: 'GET',
@@ -56,16 +51,9 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
         }
     }
 
-
     // Navigator view controlls
-    const [selectedButton, setSelectedButton] = useState(1);
     const [title, setTitle] = useState('Groups');
-    // UE to log title when chajnged 
-    useEffect(() => {
-        console.log(title)
-    }, [title])
     const handleButtonClick = (buttonId) => {
-        setSelectedButton(buttonId);
         if (buttonId === 1) {
             setTitle('Contacts');
         } else if (buttonId === 2) {
@@ -75,15 +63,17 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
         }
     };
 
+
     // CONTACTS
-    // Add contact BTN 
+    // Add contact
     const [addContactActive, setAddContactActive] = useState(false);
     const [addContactInput, setAddContactInput] = useState("");
     const [userNotFound, setUserNotFound] = useState(false);
-    // Handle change function 
+    // Handle change input function 
     const hanldeAddContactInputChange = (e) => {
         setAddContactInput(e.target.value)
     }
+    // Add new contact BTN
     const addContact = async (e) => {
         e.stopPropagation();
         const requestOptions = {
@@ -112,7 +102,6 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
     }
     // Remove Contact BTN 
     const removeContact = async (contactId) => {
-
         const requestOptions = {
             method: 'PUT',
             headers: {
@@ -135,6 +124,101 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
             console.error(error);
         }
     };
+
+    // GROUPS
+    // Add Group
+    const [addGroupActive, setAddGroupActive] = useState(false);
+    const [newGroupName, setNewGroupName] = useState('');
+    const [groupsData, setGroupsData] = useState([]);
+    // UseEffect - when userData is updated, fetch info for each group in the .GROUPS array
+    useEffect(() => {
+        if (userData && userData.userInfo && Array.isArray(userData.userInfo.GROUPS)) {
+            // Define an async function inside useEffect
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('UserAccessToken')}`
+                },
+                body: JSON.stringify({ array: userData.userInfo.GROUPS })
+            };
+
+            const fetchData = async () => {
+                try {
+                    const response = await fetch(`${backendUrl}/groups/getgroupbyid`, requestOptions);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const data = await response.json();
+                    setGroupsData(data.groups); // Log the response data
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                }
+            };
+            fetchData();
+        }
+        console.log(userData)
+    }, [userData]);
+    // Button handlers 
+    const handleNewGroupNameChange = (e) => {
+        setNewGroupName(e.target.value)
+    }
+    // Add group BTN 
+    const addGroup = async (e) => {
+        e.stopPropagation();
+        console.log("adding group FE")
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('UserAccessToken')}`
+            },
+            body: JSON.stringify({
+                groupName: newGroupName
+            })
+        };
+        try {
+            const response = await fetch(`${backendUrl}/groups/creategroup`, requestOptions);
+            // const responseData = await response.json();
+            if (!response.ok) {
+                alert("not ok")
+            } else {
+                getUserAccountInfo();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+
+
+
+    }
+    // Leave group BTN
+    const leaveGroup = async(groupId) => { 
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('UserAccessToken')}`
+            },
+            body: JSON.stringify({ groupId: groupId })
+        };
+        try {
+            const response = await fetch(`${backendUrl}/groups/leavegroupbyid`, requestOptions);
+            if (!response.ok) {
+                console.log('NOT OK')
+                getUserAccountInfo();
+                throw new Error('Network response was not ok');
+                
+            } else { 
+                console.log("res OK")
+                getUserAccountInfo();
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+        }
+    }
+
 
 
     return (
@@ -207,7 +291,6 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
                             onClick={() => setAddContactActive(prevState => !prevState)}
                         >
                             Add Contact
-
                             {addContactActive && (
                                 <>
                                     <input
@@ -225,28 +308,51 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
                             )}
                         </div>
 
-                        {userData.userInfo.CONTACTS.map(contact => (
+                        {userData.userInfo && userData.userInfo.CONTACTS && userData.userInfo.CONTACTS.map(contact => (
                             <div key={contact.ID} className="Contact">
-                                {contact.FIRST_NAME} {contact.LAST_NAME} 
-                                <button 
-                                className="Remove-contact-BTN"
-                                onClick={() => removeContact(contact.ID)}>Remove</button>
+                                {contact.FIRST_NAME} {contact.LAST_NAME}
+                                <button
+                                    className="Remove-contact-BTN"
+                                    onClick={() => removeContact(contact.ID)}>Remove</button>
                             </div>
                         ))}
 
                     </>
                 ) : title === 'Groups' ? (
                     <>
+
+                        <div
+                            className="Add-group-btn"
+                            onClick={() => setAddGroupActive(prevState => !prevState)}
+                        >
+                            {addGroupActive ?
+                                'Add Group BTN'
+                                :
+                                <>
+                                    <input
+                                        value={newGroupName}
+                                        onChange={handleNewGroupNameChange}
+                                        onClick={(e) => e.stopPropagation()}
+                                        placeholder="New group name"
+                                    />
+                                    <button
+                                        onClick={addGroup}
+                                    >Add</button>
+                                </>
+                            }
+                        </div>
                         {/* for each group in the user data - map each group */}
-                        <div className="Group">Add Group BTN</div>
+                        {groupsData.map((group, index) => (
+                            <div key={index} className="Group">
+                                {group.NAME}
+                                <button
+                                className="Remove-contact-BTN"
+                                onClick={() => leaveGroup(group.ID)}
+                                >Leave</button>
+                            </div>
+                        ))}
                         <div className="Group">Group Name</div>
-                        <div className="Group">Group Name</div>
-                        <div className="Group">Group Name</div>
-                        <div className="Group">Group Name</div>
-                        <div className="Group">Group Name</div>
-                        <div className="Group">Group Name</div>
-                        <div className="Group">Group Name</div>
-                        <div className="Group">Group Name</div>
+
                     </>
                 ) : title === 'Profile' ? (
                     <>

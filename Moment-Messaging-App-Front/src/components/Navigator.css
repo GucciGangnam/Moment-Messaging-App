@@ -78,7 +78,7 @@
 .Navigator .Title {
     margin-bottom: 7px;
 }
-
+/* CONTACT */
 .Navigator .Contact {
     background-color: var(--background-color-2);
     padding: 10px;
@@ -135,6 +135,39 @@
     color: rgb(255, 74, 74);
 }
 
+/* GROUP */
+.Navigator .Add-group-btn{ 
+    background-color: var(--background-color-2);
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+    width: 90%;
+    color: var(--text-color-2);
+    font-size: larger;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.Navigator .Add-group-btn:hover{
+    color: var(--text-color);
+} 
+
+.Navigator .Add-group-btn input{ 
+    text-align: center;
+    margin: 3px;
+    margin-bottom: 10px;
+    width: 70%;
+    padding: 10px;
+    border: none;
+    border-radius: 25px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+}
+.Navigator .Add-group-btn input:focus {
+    outline: 3px solid var(--input-focus)
+}
 
 .Navigator .Group {
     background-color: var(--background-color-2);
@@ -145,10 +178,13 @@
     color: var(--text-color-2);
     font-size: larger;
     font-weight: bold;
+    display: flex;
+    justify-content: space-between;
 }
 
 .Navigator .Group:hover {
     color: var(--text-color);
+    cursor: pointer;
 }
 
 .Navigator .Profile-picture-div {
