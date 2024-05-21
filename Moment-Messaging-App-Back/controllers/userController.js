@@ -139,17 +139,104 @@ exports.user_login = asyncHandler(async (req, res, next) => {
     // Send access token 
     const secretKey = process.env.API_SECURITY_KEY;
     const accessToken = jwt.sign(payload, secretKey, { expiresIn: '60m' })
-    res.status(200).json({accessToken: accessToken})
+    res.status(200).json({ accessToken: accessToken })
     return;
 });
 
 
 // Read user
-exports.get_user_info = asyncHandler(async(req, res, next) => { 
+exports.get_user_info = asyncHandler(async (req, res, next) => {
     console.log("user info passed through")
     // Get user object 
-    const userInfo = await User.findOne({ID: req.userId})
-    res.status(200).json({userInfo: userInfo})
+    const userInfo = await User.findOne({ ID: req.userId })
+    res.status(200).json({ userInfo: userInfo })
+});
+
+// Add Contact 
+exports.add_contact = asyncHandler(async (req, res, next) => {
+    try {
+        // Define sender profile 
+        const sender = await User.findOne({ ID: req.userId });
+        // Define receiver profile 
+        const receiver = await User.findOne({ EMAIL: req.body.contact });
+        if (!receiver) {
+            res.status(404).json({ msg: 'User not found' });
+            return;
+        }
+
+        // Create objects to be added to contacts
+        const senderContact = {
+            ID: sender.ID,
+            FIRST_NAME: sender.FIRST_NAME,
+            LAST_NAME: sender.LAST_NAME
+        };
+        const receiverContact = {
+            ID: receiver.ID,
+            FIRST_NAME: receiver.FIRST_NAME,
+            LAST_NAME: receiver.LAST_NAME
+        };
+
+        // Update sender profile CONTACTS by adding receiver's contact object
+        await User.updateOne(
+            { ID: req.userId },
+            { $addToSet: { CONTACTS: receiverContact } }
+        );
+
+        // Update receiver profile CONTACTS by adding sender's contact object
+        await User.updateOne(
+            { EMAIL: req.body.contact },
+            { $addToSet: { CONTACTS: senderContact } }
+        );
+
+        console.log('Receiver:', receiver);
+        res.status(200).json({ msg: 'Contacts updated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Server error' });
+    }
+});
+
+exports.remove_contact = asyncHandler(async (req, res, next) => {
+    try {
+        // Define sender profile 
+        const sender = await User.findOne({ ID: req.userId });
+        // Define receiver profile 
+        const receiver = await User.findOne({ ID: req.body.contact });
+        if (!receiver) {
+            res.status(404).json({ msg: 'User not found' });
+            return;
+        }
+
+        // Create objects to be removed from contacts
+        const senderContact = {
+            ID: sender.ID,
+            FIRST_NAME: sender.FIRST_NAME,
+            LAST_NAME: sender.LAST_NAME
+        };
+        const receiverContact = {
+            ID: receiver.ID,
+            FIRST_NAME: receiver.FIRST_NAME,
+            LAST_NAME: receiver.LAST_NAME
+        };
+
+        // Update sender profile CONTACTS by removing receiver's contact object
+        await User.updateOne(
+            { ID: req.userId },
+            { $pull: { CONTACTS: receiverContact } }
+        );
+
+        // Update receiver profile CONTACTS by removing sender's contact object
+        await User.updateOne(
+            { EMAIL: req.body.contact },
+            { $pull: { CONTACTS: senderContact } }
+        );
+
+        console.log('Receiver:', receiver);
+        res.status(200).json({ msg: 'Contacts removed successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Server error' });
+    }
 });
 
 // Update 

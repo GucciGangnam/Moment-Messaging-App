@@ -18,7 +18,6 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
     const [fetchEror, setFetchError] = useState(false);
     // Client info 
     const [userData, setUserData] = useState({});
-
     // ?? DELETE ME UE to log userData once got it 
     useEffect(() => {
         console.log(userData.userInfo)
@@ -75,6 +74,68 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
             setTitle('Profile');
         }
     };
+
+    // CONTACTS
+    // Add contact BTN 
+    const [addContactActive, setAddContactActive] = useState(false);
+    const [addContactInput, setAddContactInput] = useState("");
+    const [userNotFound, setUserNotFound] = useState(false);
+    // Handle change function 
+    const hanldeAddContactInputChange = (e) => {
+        setAddContactInput(e.target.value)
+    }
+    const addContact = async (e) => {
+        e.stopPropagation();
+        const requestOptions = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('UserAccessToken')}`
+            },
+            body: JSON.stringify({
+                contact: addContactInput
+            })
+        };
+        try {
+            const response = await fetch(`${backendUrl}/users/addcontact`, requestOptions);
+            // const responseData = await response.json();
+            if (!response.ok) {
+                setUserNotFound(true);
+                setAddContactInput('');
+            } else {
+                setUserNotFound(false);
+                getUserAccountInfo();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    // Remove Contact BTN 
+    const removeContact = async (contactId) => {
+
+        const requestOptions = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('UserAccessToken')}`
+            },
+            body: JSON.stringify({
+                contact: contactId
+            })
+        };
+        try {
+            const response = await fetch(`${backendUrl}/users/removecontact`, requestOptions);
+            // const responseData = await response.json();
+            if (!response.ok) {
+                alert("try again later")
+            } else {
+                getUserAccountInfo();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
 
     return (
         <div className="Navigator">
@@ -140,10 +201,36 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
                 {title === 'Contacts' ? (
                     <>
                         {/* for each contact in the user data - map each contact */}
-                        <div className="Contact">Add Contact BTN</div>
+
+                        <div
+                            className="Add-contact-btn"
+                            onClick={() => setAddContactActive(prevState => !prevState)}
+                        >
+                            Add Contact
+
+                            {addContactActive && (
+                                <>
+                                    <input
+                                        style={{ outline: userNotFound ? '2px solid red' : '' }}
+                                        value={addContactInput}
+                                        onChange={hanldeAddContactInputChange}
+                                        type="search"
+                                        placeholder={userNotFound ? 'User not found' : 'Enter user address'}
+                                        onClick={(e) => e.stopPropagation()}
+                                    />
+                                    <button
+                                        onClick={addContact}
+                                    >Add</button>
+                                </>
+                            )}
+                        </div>
+
                         {userData.userInfo.CONTACTS.map(contact => (
                             <div key={contact.ID} className="Contact">
-                                {contact.FIRST_NAME} {contact.LAST_NAME}
+                                {contact.FIRST_NAME} {contact.LAST_NAME} 
+                                <button 
+                                className="Remove-contact-BTN"
+                                onClick={() => removeContact(contact.ID)}>Remove</button>
                             </div>
                         ))}
 

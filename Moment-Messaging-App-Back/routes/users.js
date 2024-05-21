@@ -19,4 +19,9 @@ router.get('/login', authenticator_controller.validateAccessTokenStandAlone)
 // get user account info //
 router.get('/account', authenticator_controller.validateAccessToken, user_controller.get_user_info);
 
+// Add Contact 
+router.put('/addcontact', authenticator_controller.validateAccessToken, user_controller.add_contact)
+// Remove Contact 
+router.put('/removecontact', authenticator_controller.validateAccessToken, user_controller.remove_contact)
+
 module.exports = router;

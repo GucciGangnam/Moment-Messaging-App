@@ -85,11 +85,56 @@
     border-radius: 10px;
     width: 90%;
     color: var(--text-color-2);
+    display: flex;
+    justify-content: space-between;
 }
 
 .Navigator .Contact:hover {
     color: var(--text-color);
 }
+
+.Navigator .Add-contact-btn {
+    background-color: var(--background-color-2);
+    padding: 10px;
+    border-radius: 10px;
+    width: 90%;
+    color: var(--text-color-2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Navigator .Add-contact-btn:hover {
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.Navigator .Add-contact-btn input {
+    margin: 3px;
+    margin-bottom: 10px;
+    width: 70%;
+    padding: 6px;
+    border: none;
+    border-radius: 25px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+}
+
+.Navigator .Add-contact-btn input:focus {
+    outline: 3px solid var(--input-focus)
+}
+
+.Navigator .Remove-contact-BTN {
+    border: none;
+    background-color: inherit;
+    color: var(--text-color-2);
+}
+
+.Navigator .Remove-contact-BTN:hover {
+    cursor: pointer;
+    color: rgb(255, 74, 74);
+}
+
 
 .Navigator .Group {
     background-color: var(--background-color-2);
@@ -141,7 +186,8 @@
 .Navigator .Log-out-btn {
     stroke: var(--img-deselected);
 }
+
 .Navigator .Log-out-btn:hover {
-cursor: pointer;
-stroke: var(--img-selected);
+    cursor: pointer;
+    stroke: var(--img-selected);
 }
