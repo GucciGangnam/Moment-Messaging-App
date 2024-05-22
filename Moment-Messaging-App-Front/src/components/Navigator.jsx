@@ -9,7 +9,7 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 
 // COMPONENT
-export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout }) => {
+export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout, roomID, setRoomID }) => {
 
     // STATES 
     // Loading and errors 
@@ -69,6 +69,8 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
     const [addContactActive, setAddContactActive] = useState(false);
     const [addContactInput, setAddContactInput] = useState("");
     const [userNotFound, setUserNotFound] = useState(false);
+
+    // CONTACTS
     // Handle change input function 
     const hanldeAddContactInputChange = (e) => {
         setAddContactInput(e.target.value)
@@ -194,7 +196,7 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
 
     }
     // Leave group BTN
-    const leaveGroup = async(groupId) => { 
+    const leaveGroup = async (groupId) => {
         const requestOptions = {
             method: 'POST',
             headers: {
@@ -209,14 +211,26 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
                 console.log('NOT OK')
                 getUserAccountInfo();
                 throw new Error('Network response was not ok');
-                
-            } else { 
+
+            } else {
                 console.log("res OK")
                 getUserAccountInfo();
             }
         } catch (error) {
             console.error('Fetch error:', error);
         }
+    }
+    // ROOM 
+    // Enter Room function 
+    const [selectedRoom, setSelectedRoom] = useState("");
+
+    const enterRoom = (groupID, groupNAME) => {
+
+        // Color the group to an active color
+        // console.log(e.target.group.ID)
+        // setRoomID(groupId)
+        setSelectedRoom(groupID)
+        console.log(groupNAME)
     }
 
 
@@ -272,7 +286,7 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
                 {title}
             </div>
 
-
+            {/* SEARCH BOX */}
             {(title === 'Contacts' || title === 'Groups') && (
                 <input
                     className="Search"
@@ -280,12 +294,10 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
                 />
             )}
 
-
             <div className="Content">
                 {title === 'Contacts' ? (
                     <>
                         {/* for each contact in the user data - map each contact */}
-
                         <div
                             className="Add-contact-btn"
                             onClick={() => setAddContactActive(prevState => !prevState)}
@@ -307,7 +319,6 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
                                 </>
                             )}
                         </div>
-
                         {userData.userInfo && userData.userInfo.CONTACTS && userData.userInfo.CONTACTS.map(contact => (
                             <div key={contact.ID} className="Contact">
                                 {contact.FIRST_NAME} {contact.LAST_NAME}
@@ -316,11 +327,9 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
                                     onClick={() => removeContact(contact.ID)}>Remove</button>
                             </div>
                         ))}
-
                     </>
                 ) : title === 'Groups' ? (
                     <>
-
                         <div
                             className="Add-group-btn"
                             onClick={() => setAddGroupActive(prevState => !prevState)}
@@ -343,16 +352,21 @@ export const Navigator = ({ toggleTheme, isDarkMode, setClientView, handleLogout
                         </div>
                         {/* for each group in the user data - map each group */}
                         {groupsData.map((group, index) => (
-                            <div key={index} className="Group">
+                            <div
+                                key={index}
+                                className={selectedRoom === group.ID ? "Group-selected" : "Group"}
+                                onClick={() => enterRoom(group.ID, group.NAME)}
+                            >
                                 {group.NAME}
                                 <button
-                                className="Remove-contact-BTN"
-                                onClick={() => leaveGroup(group.ID)}
+                                    className="Remove-contact-BTN"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        leaveGroup(group.ID);
+                                    }}
                                 >Leave</button>
                             </div>
                         ))}
-                        <div className="Group">Group Name</div>
-
                     </>
                 ) : title === 'Profile' ? (
                     <>

@@ -1,4 +1,6 @@
 // IMPORTS 
+// React 
+import { useState, useEffect } from "react";
 // Styles 
 import "./Room.css"
 
@@ -6,7 +8,14 @@ import "./Room.css"
 
 
 // COMPONENTS 
-export const Room = () => {
+export const Room = ({roomID}) => {
+    // ROOM INFO 
+    const [groupData, setGroupData] = useState();
+    // fetch room data ONLY IF USER IS A MEMBER
+    // back end validate access token 
+    // take req.userId in next MW and see if its in teh group
+    // setGroupData
+
     return (
         <div className="Room">
 

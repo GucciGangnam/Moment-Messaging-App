@@ -11,6 +11,10 @@ const groupsSchema = new Schema({
         type: String,
         required: true,
     },
+    ROOM_NAME: {
+        type: String,
+        required: true,
+    },
     ADMIN: {
         type: String,
         required: true,
