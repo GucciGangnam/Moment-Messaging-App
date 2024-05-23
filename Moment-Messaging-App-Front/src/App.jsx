@@ -36,10 +36,14 @@ export const App = () => {
   const [clientView, setClientView] = useState('login') // login || navigator
   const [currentGroupOBJ, setCurrentGroupOBJ] = useState('')
 
+  ///////////////////////////////////////// USE EFFECT TO LOG CURRENTGROUPOBJ WHEN UPDATED
   useEffect(() => { 
     console.log('current group OBJ next: ')
     console.log(currentGroupOBJ)
   },[currentGroupOBJ])
+    ///////////////////////////////////////// USE EFFECT TO LOG CURRENTGROUPOBJ WHEN UPDATED
+
+
 
 
   // CLIENT ACCOUNT INFO //
@@ -105,7 +109,6 @@ export const App = () => {
       } else {
         // console.log(responseData); // DELETE ME
         setUserGroupData(responseData.groups);
-        console.log(responseData.groups)
       }
     } catch (error) {
       console.error(error);
@@ -113,6 +116,12 @@ export const App = () => {
     }
   }
 
+///////////////////////////////////////// USE EFFECT TO LOG USERGROUPDATA WHEN UPDATED
+  useEffect(() => { 
+    console.log('user group data next: ')
+    console.log(userGroupData)
+  },[userGroupData])
+  ///////////////////////////////////////// USE EFFECT TO LOG USERGROUPDATA WHEN UPDATED
 
 
 
@@ -140,10 +149,10 @@ export const App = () => {
       if (!response.ok) {
         console.log("this jwt isn't valid m8  - delete that shit");
         localStorage.removeItem('UserAccessToken');
-        console.log(responseData);
+        // console.log(responseData);
       } else {
         setClientView('navigator')
-        console.log(responseData);
+        // console.log(responseData);
       }
     } catch (error) {
       console.error("An error occurred while verifying access token:", error);
@@ -197,6 +206,8 @@ export const App = () => {
         <Landing />
         :
         <Room 
+        // Dont need to pass in currentGroupOBJ but instead need to pass in userGroupData.[which ever object has the same ID as currentGroupOBJ.ID]
+        userGroupData={userGroupData}
         currentGroupOBJ={currentGroupOBJ}
         userData={userData}
         getUserAccountInfo={getUserAccountInfo}/>

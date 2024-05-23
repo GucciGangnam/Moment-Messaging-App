@@ -10,10 +10,11 @@ import { AddMember } from "./AddMember";
 
 
 // COMPONENTS 
-export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo }) => {
+export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupData }) => {
 
 
-    // DELETE ME 
+    // Find the index of the group object in userGroupData that matches the currentGroupOBJ ID
+    const groupIndex = userGroupData.findIndex(group => group.ID === currentGroupOBJ.ID);
 
     // Add Memebr Compoenent 
     const [addMemberShowing, setAddMemberShowing] = useState(false);
@@ -30,9 +31,10 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo }) => {
 
                 <div className="Top-left">
 
+                {userGroupData[groupIndex].MEMBERS.length}
                     <svg
                         onClick={() => {
-                            const memberNames = currentGroupOBJ.MEMBERS.map(member => `${member.FIRST_NAME} ${member.LAST_NAME}`).join(', ');
+                            const memberNames = userGroupData[groupIndex].MEMBERS.map(member => `${member.FIRST_NAME} ${member.LAST_NAME}`).join(', ');
                             alert(memberNames);
                         }}
                         className="Members-btn"
@@ -73,9 +75,10 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo }) => {
                     </svg>
                     {addMemberShowing && (
                         <AddMember
-                        currentGroupOBJ={currentGroupOBJ}
-                        userData={userData}
-                        getUserAccountInfo={getUserAccountInfo}/>
+                            currentGroupOBJ={currentGroupOBJ}
+                            userGroupData={userGroupData}
+                            userData={userData}
+                            getUserAccountInfo={getUserAccountInfo} />
                     )}
 
                 </div>
@@ -83,14 +86,14 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo }) => {
                 <div className="Top-min">
                     <div className="Room-info">
                         <div className="Room-title">
-                            {currentGroupOBJ.NAME}
+                            {userGroupData[groupIndex].NAME}
                         </div>
                         <div className="Room-meta">
                             <div className="Room-creator">
-                                Created by {currentGroupOBJ.ADMIN.FIRST_NAME} {currentGroupOBJ.ADMIN.LAST_NAME}
+                                Created by {userGroupData[groupIndex].ADMIN.FIRST_NAME} {userGroupData[groupIndex].ADMIN.LAST_NAME}
                             </div>
                             <div className="Room-timer">
-                                {currentGroupOBJ.MEMBERS.length}
+                                TIMER
                             </div>
                         </div>
                     </div>

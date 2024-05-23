@@ -159,7 +159,8 @@ export const Navigator = ({ toggleTheme, isDarkMode, handleLogout, userData, get
                 throw new Error('Network response was not ok');
 
             } else {
-                console.log("res OK")
+                setCurrentGroupOBJ('');
+                console.log("res OK");
                 getUserAccountInfo();
             }
         } catch (error) {
@@ -182,7 +183,7 @@ export const Navigator = ({ toggleTheme, isDarkMode, handleLogout, userData, get
         <div className="Navigator">
 
             <div className="Header">
-                <h1>Moment</h1>
+                <h1>Moment</h1> 
                 <div className="Devider"></div>
             </div>
 

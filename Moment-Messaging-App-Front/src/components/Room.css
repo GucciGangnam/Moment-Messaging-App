@@ -37,6 +37,7 @@
 }
 .Room .Members-btn:hover{ 
     fill: var(--img-selected);
+    cursor: pointer;
 }
 
 .Room .Add-member-btn{ 
@@ -47,6 +48,7 @@
 }
 .Room .Add-member-btn:hover{ 
     stroke: var(--img-selected);
+    cursor: pointer;
 }
 
 .Room .Add-member-btn-selected{ 

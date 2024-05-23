@@ -9,11 +9,14 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 // COMPOENNT 
 
-export const AddMember = ({ currentGroupOBJ, userData, getUserAccountInfo }) => {
+export const AddMember = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupData }) => {
+
+    // Find the index of the group object in userGroupData that matches the currentGroupOBJ ID
+    const groupIndex = userGroupData.findIndex(group => group.ID === currentGroupOBJ.ID);
 
     //Filter contacts for those not in group
     const userContacts = userData.userInfo.CONTACTS;
-    const groupMembers = currentGroupOBJ.MEMBERS;
+    const groupMembers = userGroupData[groupIndex].MEMBERS;
     // Extract IDs of group members for easy lookup
     const groupMemberIds = groupMembers.map(member => member.ID);
     // Filter out contacts that are already group members
@@ -28,7 +31,7 @@ export const AddMember = ({ currentGroupOBJ, userData, getUserAccountInfo }) => 
                 'Authorization': `Bearer ${localStorage.getItem('UserAccessToken')}`
             },
             body: JSON.stringify({
-                "group": currentGroupOBJ.ID,
+                "group": userGroupData[groupIndex].ID,
                 "memberToAdd": contactID
             })
         };
@@ -50,6 +53,7 @@ export const AddMember = ({ currentGroupOBJ, userData, getUserAccountInfo }) => 
 
     return (
         <div className="AddMember">
+            Contacts
             {filteredContacts.map(contact => (
                 <div
                     onClick={() => { handleAddContacttoGroup(contact.ID) }}
