@@ -36,6 +36,11 @@ export const App = () => {
   const [clientView, setClientView] = useState('login') // login || navigator
   const [currentGroupOBJ, setCurrentGroupOBJ] = useState('')
 
+  useEffect(() => { 
+    console.log('current group OBJ next: ')
+    console.log(currentGroupOBJ)
+  },[currentGroupOBJ])
+
 
   // CLIENT ACCOUNT INFO //
   const [userData, setUserData] = useState({});
@@ -100,12 +105,14 @@ export const App = () => {
       } else {
         // console.log(responseData); // DELETE ME
         setUserGroupData(responseData.groups);
+        console.log(responseData.groups)
       }
     } catch (error) {
       console.error(error);
       // Set fetch error to true
     }
   }
+
 
 
 
@@ -189,7 +196,10 @@ export const App = () => {
       {clientView === 'login' || currentGroupOBJ === "" ?
         <Landing />
         :
-        <Room currentGroupOBJ={currentGroupOBJ}/>
+        <Room 
+        currentGroupOBJ={currentGroupOBJ}
+        userData={userData}
+        getUserAccountInfo={getUserAccountInfo}/>
       }
     </div>
   );

@@ -19,7 +19,7 @@ router.get('/getgroupinfo', authenticator_controller.validateAccessToken, group_
 // leave group 
 router.post('/leavegroupbyid', authenticator_controller.validateAccessToken, group_controller.leavegroupbyid)
 // Add memebr to group 
-router.post('/addgroupmember', authenticator_controller.validateAccessToken, group_controller.addgroupmember)
+router.put('/addgroupmember', authenticator_controller.validateAccessToken, group_controller.addgroupmember)
 
 // DELETE //
 

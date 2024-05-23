@@ -10,7 +10,7 @@ import { AddMember } from "./AddMember";
 
 
 // COMPONENTS 
-export const Room = ({ currentGroupOBJ }) => {
+export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo }) => {
 
 
     // DELETE ME 
@@ -72,7 +72,10 @@ export const Room = ({ currentGroupOBJ }) => {
                         <path d="M4 12H20M12 4V20" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                     {addMemberShowing && (
-                        <AddMember />
+                        <AddMember
+                        currentGroupOBJ={currentGroupOBJ}
+                        userData={userData}
+                        getUserAccountInfo={getUserAccountInfo}/>
                     )}
 
                 </div>
@@ -87,7 +90,7 @@ export const Room = ({ currentGroupOBJ }) => {
                                 Created by {currentGroupOBJ.ADMIN.FIRST_NAME} {currentGroupOBJ.ADMIN.LAST_NAME}
                             </div>
                             <div className="Room-timer">
-                                Timer
+                                {currentGroupOBJ.MEMBERS.length}
                             </div>
                         </div>
                     </div>

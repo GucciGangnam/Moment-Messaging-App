@@ -46,17 +46,7 @@ exports.create_group = asyncHandler(async (req, res, next) => {
 });
 
 
-
-
-
-
-
-
-
-
-
 // Get group by id
-
 exports.getgroupinfo = asyncHandler(async (req, res, next) => {
     try {
         const userGroups = [];
@@ -84,25 +74,6 @@ exports.getgroupinfo = asyncHandler(async (req, res, next) => {
         next(error);
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 exports.leavegroupbyid = asyncHandler(async (req, res, next) => {
@@ -147,39 +118,52 @@ exports.leavegroupbyid = asyncHandler(async (req, res, next) => {
 
 // Add Member To Group By ID
 exports.addgroupmember = asyncHandler(async (req, res, next) => {
+    try {
+        // Step 1: Find the group by its ID
+        const group = await Group.findOne({ ID: req.body.group });
 
-    // Get group object based on the provided groupID
-    const group = await Group.findOne({ ID: req.body.groupID });
-
-    // Get memberToAdd object based on the provided memberToAddID
-    const memberToAdd = await User.findOne({ ID: req.body.memberToAddID });
-
-    // Check if both group and memberToAdd are found
-    if (group && memberToAdd) {
-        // Check if the member is already in the group's MEMBERS array
-        if (group.MEMBERS.includes(req.body.memberToAddID)) {
-            return res.status(400).json({ message: "Member is already in the group" });
+        if (!group) {
+            return res.status(404).json({ message: "Group not found." });
         }
 
-        // Check if the group is already in the member's GROUPS array
-        if (memberToAdd.GROUPS.includes(req.body.groupID)) {
-            return res.status(400).json({ message: "Group is already in the member's groups" });
+        // Step 1.1: Check if the requesting user is a member of the group
+        if (!group.MEMBERS.some(member => member.ID === req.userId)) {
+            return res.status(403).json({ message: "You are not a member of the group." });
         }
 
-        // Push req.body.memberToAddID to group.MEMBERS array
-        group.MEMBERS.push(req.body.memberToAddID);
-        await group.save(); // Save the updated group object
+        // Step 2: Find the member to add by their ID
+        const memberToAdd = await User.findOne({ ID: req.body.memberToAdd });
+        
+        if (!memberToAdd) {
+            return res.status(404).json({ message: "Member not found." });
+        }
 
-        // Push req.body.groupID to memberToAdd.GROUPS array
-        memberToAdd.GROUPS.push(req.body.groupID);
-        await memberToAdd.save(); // Save the updated memberToAdd object
+        // Step 3: Check if the member is already in the group
+        const isMemberAlreadyInGroup = group.MEMBERS.some(member => member.ID === memberToAdd.ID);
+        if (isMemberAlreadyInGroup) {
+            return res.status(400).json({ message: "Member is already in the group." });
+        }
 
-        res.status(200).json({ message: "Member added to group successfully" });
-    } else {
-        // If either the group or the member to add is not found, return a 404 status with an appropriate error message.
-        let errorMessage = "";
-        if (!group) errorMessage += "Group not found. ";
-        if (!memberToAdd) errorMessage += "Member to add not found. ";
-        res.status(404).json({ message: errorMessage });
+        // Step 4: Add the member to the group's list of members
+        group.MEMBERS.push({
+            ID: memberToAdd.ID,
+            FIRST_NAME: memberToAdd.FIRST_NAME,
+            LAST_NAME: memberToAdd.LAST_NAME
+        });
+
+        await group.save();
+
+        // Step 5: Check if the group is already in the member's list of groups
+        const isGroupAlreadyInMemberGroups = memberToAdd.GROUPS.includes(group.ID);
+        if (!isGroupAlreadyInMemberGroups) {
+            // Step 6: Add the group to the member's list of groups
+            memberToAdd.GROUPS.push(group.ID);
+            await memberToAdd.save();
+        }
+
+        res.status(200).json({ message: "Member added to the group successfully." });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
