@@ -4,7 +4,7 @@ var router = express.Router();
 // CONTROLLERS //
 const user_controller = require('../controllers/userController');
 const authenticator_controller = require('../controllers/authenticatorController');
-const group_controller = require('../controllers/groupCntroller');
+const group_controller = require('../controllers/groupController');
 
 ///// ROUTRS ////
 
@@ -13,11 +13,13 @@ router.post('/creategroup', authenticator_controller.validateAccessToken, group_
 
 // READ // 
 // Read: Get a particular group by ID
-router.post('/getgroupbyid', authenticator_controller.validateAccessToken, group_controller.getGroupById)
+router.get('/getgroupinfo', authenticator_controller.validateAccessToken, group_controller.getgroupinfo)
 
 // UPDATE // 
 // leave group 
 router.post('/leavegroupbyid', authenticator_controller.validateAccessToken, group_controller.leavegroupbyid)
+// Add memebr to group 
+router.post('/addgroupmember', authenticator_controller.validateAccessToken, group_controller.addgroupmember)
 
 // DELETE //
 

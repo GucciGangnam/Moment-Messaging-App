@@ -1,20 +1,27 @@
 // IMPORTS 
 // React 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 // Styles 
 import "./Room.css"
+// Compoennets 
+import { AddMember } from "./AddMember";
 
 
 
 
 // COMPONENTS 
-export const Room = ({roomID}) => {
+export const Room = ({ currentGroupOBJ }) => {
+
+
+    // DELETE ME 
+
+    // Add Memebr Compoenent 
+    const [addMemberShowing, setAddMemberShowing] = useState(false);
+
+
     // ROOM INFO 
-    const [groupData, setGroupData] = useState();
-    // fetch room data ONLY IF USER IS A MEMBER
-    // back end validate access token 
-    // take req.userId in next MW and see if its in teh group
-    // setGroupData
+
+    // Get meber names from ID's
 
     return (
         <div className="Room">
@@ -24,7 +31,10 @@ export const Room = ({roomID}) => {
                 <div className="Top-left">
 
                     <svg
-                        onClick={() => { console.log("View members clicked") }}
+                        onClick={() => {
+                            const memberNames = currentGroupOBJ.MEMBERS.map(member => `${member.FIRST_NAME} ${member.LAST_NAME}`).join(', ');
+                            alert(memberNames);
+                        }}
                         className="Members-btn"
                         width="30px"
                         height="30px"
@@ -51,25 +61,30 @@ export const Room = ({roomID}) => {
                         </g>
                     </svg>
 
+
+
                     <svg
-                        onClick={() => { console.log("Add member clicked") }}
-                        className="Add-member-btn"
+                        onClick={() => { setAddMemberShowing(prevState => !prevState) }}
+                        className={addMemberShowing ? 'Add-member-btn-selected' : 'Add-member-btn'}
                         width="30px"
                         height="30px"
                         viewBox="0 0 24 24" >
                         <path d="M4 12H20M12 4V20" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                    
+                    {addMemberShowing && (
+                        <AddMember />
+                    )}
+
                 </div>
 
                 <div className="Top-min">
                     <div className="Room-info">
                         <div className="Room-title">
-                            Drinks tonight anyone?
+                            {currentGroupOBJ.NAME}
                         </div>
                         <div className="Room-meta">
                             <div className="Room-creator">
-                                Created by Member
+                                Created by {currentGroupOBJ.ADMIN.FIRST_NAME} {currentGroupOBJ.ADMIN.LAST_NAME}
                             </div>
                             <div className="Room-timer">
                                 Timer
@@ -84,6 +99,8 @@ export const Room = ({roomID}) => {
 
             </div>
             <div className="Devider"></div>
+
+
 
             <div className="Main">
                 Main

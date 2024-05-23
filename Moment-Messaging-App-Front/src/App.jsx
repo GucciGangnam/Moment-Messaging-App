@@ -16,15 +16,100 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 // COMPONENT
 export const App = () => {
-  // STATES
-  // Darkmode
+
+  // DARKMODE //
   const [isDarkMode, setIsDarkMode] = useState(false);
-  // Client view 
+  // Handle toggle dark theme
+  const toggleTheme = () => {
+    setIsDarkMode(prevMode => !prevMode);
+  };
+  // UE to update rerender App when theme is toggled
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+  }, [isDarkMode]);
+
+  // CLIENT VIEW //
   const [clientView, setClientView] = useState('login') // login || navigator
-  const [roomID, setRoomID] = useState('')
-  // Check if user already has a valid access token and log them in if they do.
+  const [currentGroupOBJ, setCurrentGroupOBJ] = useState('')
+
+
+  // CLIENT ACCOUNT INFO //
+  const [userData, setUserData] = useState({});
+  // FETCH USER ACCOUNT INFO - Save to userData state
+  const getUserAccountInfo = async () => {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('UserAccessToken')}`
+      },
+    };
+    // Fetch user info
+    try {
+      const response = await fetch(`${backendUrl}/users/account`, requestOptions);
+      const responseData = await response.json();
+      if (!response.ok) {
+        if (response.status === 401) {
+          handleLogout();
+        } else {
+          console.log('response wasnt good sir'); // What could cause this?
+        }
+      } else {
+        // console.log(responseData); // DELETE ME
+        setUserData(responseData);
+      }
+    } catch (error) {
+      console.error(error);
+      // Set fetch error to true
+    }
+  }
+  // UE to run fetch User Account Info on mount
+  useEffect(() => {
+    getUserAccountInfo();
+  }, [])
   /////////////////////////////////////////////////
-  // On mount. check if there is an access token, if there is, logem in, if not delete it 
+
+  // CLIENT GROUP INFO //
+  const [userGroupData, setUserGroupData] = useState({});
+  // Get Groups data for each of teh grousp that the user is in once UserData has been fetched
+  useEffect(() => {
+    getGroupData();
+  }, [userData])
+  // Fetch group Info for client
+  const getGroupData = async () => {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('UserAccessToken')}`
+      },
+    };
+    try {
+      const response = await fetch(`${backendUrl}/groups/getgroupinfo`, requestOptions);
+      const responseData = await response.json();
+      if (!response.ok) {
+        if (response.status === 401) {
+          handleLogout();
+        } else {
+          console.log('response wasnt good sir'); // What could cause this?
+        }
+      } else {
+        // console.log(responseData); // DELETE ME
+        setUserGroupData(responseData.groups);
+      }
+    } catch (error) {
+      console.error(error);
+      // Set fetch error to true
+    }
+  }
+
+
+
+  // FUNCTIONS TO CHECK IF USER IS LOGGED IN //
   useEffect(() => {
     if (localStorage.getItem('UserAccessToken')) {
       verifyAccessToken();
@@ -58,30 +143,17 @@ export const App = () => {
     }
   };
   /////////////////////////////////////////////////
-  // ClientAccessToken
-  const [userAccessToken, setUserAccessToken] = useState('')
 
-  // LOGOUT
+
+
+
+  // LOGOUT //
   const handleLogout = () => {
     localStorage.removeItem('UserAccessToken');
     setClientView('login');
   }
   /////////////////////////////////////////////////
-  // BUTTON HANDLERS
-  // Handle toggle dark theme
-  const toggleTheme = () => {
-    setIsDarkMode(prevMode => !prevMode);
-  };
-  // UE to update rerender App when theme is toggled
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-    }
-  }, [isDarkMode]);
-  /////////////////////////////////////////////////
-  /////////////////////////////////////////////////
+
   return (
     <div className="App">
 
@@ -105,20 +177,20 @@ export const App = () => {
         <Navigator
           toggleTheme={toggleTheme}
           isDarkMode={isDarkMode}
-          setClientView={setClientView}
           handleLogout={handleLogout}
-          roomID={roomID}
-          setRoomID={setRoomID} />
+          userData={userData}
+          getUserAccountInfo={getUserAccountInfo}
+          userGroupData={userGroupData}
+          setCurrentGroupOBJ={setCurrentGroupOBJ}
+        />
       )}
 
       {/* RIGHT */}
-      {clientView === 'login' || roomID === "" ?
+      {clientView === 'login' || currentGroupOBJ === "" ?
         <Landing />
         :
-        <Room roomID={roomID} />
+        <Room currentGroupOBJ={currentGroupOBJ}/>
       }
-
-
     </div>
   );
 };

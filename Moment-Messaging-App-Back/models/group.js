@@ -16,8 +16,18 @@ const groupsSchema = new Schema({
         required: true,
     },
     ADMIN: {
-        type: String,
-        required: true,
+        ID: {
+            type: String,
+            required: true,
+        },
+        FIRST_NAME: {
+            type: String,
+            required: true,
+        },
+        LAST_NAME: {
+            type: String,
+            required: true,
+        },
     },
     MEMBERS: {
         type: Array,

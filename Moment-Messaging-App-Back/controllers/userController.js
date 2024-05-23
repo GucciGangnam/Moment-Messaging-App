@@ -146,10 +146,10 @@ exports.user_login = asyncHandler(async (req, res, next) => {
 
 // Read user
 exports.get_user_info = asyncHandler(async (req, res, next) => {
-    console.log("user info passed through")
-    // Get user object 
-    const userInfo = await User.findOne({ ID: req.userId })
-    res.status(200).json({ userInfo: userInfo })
+    console.log("user info passed through");
+    // Get user object excluding the PASSWORD field
+    const userInfo = await User.findOne({ ID: req.userId }).select('-PASSWORD');
+    res.status(200).json({ userInfo: userInfo });
 });
 
 // Add Contact 

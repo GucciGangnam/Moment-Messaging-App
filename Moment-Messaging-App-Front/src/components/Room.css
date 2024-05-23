@@ -8,6 +8,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    position: relative;
 }
 
 /* TOP */
@@ -46,6 +48,13 @@
 .Room .Add-member-btn:hover{ 
     stroke: var(--img-selected);
 }
+
+.Room .Add-member-btn-selected{ 
+    stroke: var(--img-selected);
+}
+
+
+
 
 .Room-info {
     /* outline: 1px solid yellow; */
