@@ -5,6 +5,9 @@ import { useState, useEffect, useRef } from "react";
 import "./Room.css"
 // Compoennets 
 import { AddMember } from "./AddMember";
+import { ViewMembers } from "./ViewMembers";
+// Variables 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 
 
@@ -12,17 +15,100 @@ import { AddMember } from "./AddMember";
 // COMPONENTS 
 export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupData }) => {
 
+    const colors = {
+        "red": {
+            primary: "#f8a1ae",
+            secondary: "#fbcbd2"
+        },
+        "orange": {
+            primary: "#ffd1a9",
+            secondary: "#ffe4c7"
+        },
+        "yellow": {
+            primary: "#fff59d", // Darker pastel yellow
+            secondary: "#fff9c4"
+        },
+        "green": {
+            primary: "#c5e1a5", // Darker pastel green
+            secondary: "#e6f3d5"
+        },
+        "blue": {
+            primary: "#bbdefb",
+            secondary: "#e3f2fd"
+        },
+        "indigo": {
+            primary: "#c5cae9",
+            secondary: "#e8eaf6"
+        },
+        "violet": {
+            primary: "#e1bee7",
+            secondary: "#f3e5f5"
+        },
+        "gray": {
+            primary: "#bdbdbd", // Darker gray
+            secondary: "#e0e0e0"
+        }
+    };
+
+    const getColor = (index) => {
+        const colorKeys = Object.keys(colors);
+        return colors[colorKeys[index % colorKeys.length]];
+    };
+
+
+
+
+    ////////// DELETE ME ///////// DUMMY MESSAGES ////////// DELETE ME ///////// DUMMY MESSAGES //////////
+
+    ////////// DELETE ME ///////// DUMMY MESSAGES ////////// DELETE ME ///////// DUMMY MESSAGES //////////
 
     // Find the index of the group object in userGroupData that matches the currentGroupOBJ ID
     const groupIndex = userGroupData.findIndex(group => group.ID === currentGroupOBJ.ID);
 
     // Add Memebr Compoenent 
     const [addMemberShowing, setAddMemberShowing] = useState(false);
+    // View Members Component
+    const [viewMembersShowing, setViewMembersShowing] = useState(false);
 
+    //TOP
+    //MIDDLE
+    // BOTTOM 
 
-    // ROOM INFO 
+    // Message input 
+    const [messageInput, setMessageInput] = useState('')
+    const handleMessageInputChnage = (e) => {
+        setMessageInput(e.target.value)
+    }
+    // Send BTN 
+    const handleSendMessage = async() => {
+        console.log(messageInput);
 
-    // Get meber names from ID's
+        const requestOptions = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('UserAccessToken')}`
+            },
+            body: JSON.stringify({
+                groupId: userGroupData[groupIndex].ID,
+                message: messageInput
+            })
+        };
+        try {
+            const response = await fetch(`${backendUrl}/groups/sendmessage`, requestOptions);
+            if (!response.ok) {
+                console.log("NOT OK")
+                console.log(response)
+                throw new Error('Network response was not ok');
+            } else {
+                console.log("res OK");
+                console.log(response)
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+        }
+    }
+
 
     return (
         <div className="Room">
@@ -31,13 +117,17 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
 
                 <div className="Top-left">
 
-                {userGroupData[groupIndex].MEMBERS.length}
+                    {userGroupData[groupIndex].MEMBERS.length}
                     <svg
                         onClick={() => {
-                            const memberNames = userGroupData[groupIndex].MEMBERS.map(member => `${member.FIRST_NAME} ${member.LAST_NAME}`).join(', ');
-                            alert(memberNames);
+                            setViewMembersShowing(prevState => {
+                                if (!prevState) {
+                                    setAddMemberShowing(false);
+                                }
+                                return !prevState;
+                            });
                         }}
-                        className="Members-btn"
+                        className={viewMembersShowing ? 'View-member-btn-selected' : 'View-member-btn'}
                         width="30px"
                         height="30px"
                         viewBox="0 0 512 512">
@@ -62,11 +152,25 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
 		l-2.859-37.203C390.211,362.594,380.914,350.594,367.867,344.609z"/>
                         </g>
                     </svg>
+                    {viewMembersShowing && (
+                        <ViewMembers
+                            currentGroupOBJ={currentGroupOBJ}
+                            userGroupData={userGroupData}
+                            userData={userData}
+                            getUserAccountInfo={getUserAccountInfo} />
+                    )}
 
 
 
                     <svg
-                        onClick={() => { setAddMemberShowing(prevState => !prevState) }}
+                        onClick={() => {
+                            setAddMemberShowing(prevState => {
+                                if (!prevState) {
+                                    setViewMembersShowing(false);
+                                }
+                                return !prevState;
+                            });
+                        }}
                         className={addMemberShowing ? 'Add-member-btn-selected' : 'Add-member-btn'}
                         width="30px"
                         height="30px"
@@ -86,7 +190,7 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
                 <div className="Top-min">
                     <div className="Room-info">
                         <div className="Room-title">
-                            {userGroupData[groupIndex].NAME}
+                            {userGroupData[groupIndex].ROOM_NAME}
                         </div>
                         <div className="Room-meta">
                             <div className="Room-creator">
@@ -109,8 +213,47 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
 
 
             <div className="Main">
-                Main
+
+                {userGroupData[groupIndex].MEMBERS.map((member, index) => {
+                    const color = getColor(index);
+                    return (
+                        <div className="Message-div" key={member.ID} style={{ backgroundColor: color.secondary }}>
+                            {index % 2 === 0 ? (
+                                <>
+                                    <div className="User-initials" style={{ backgroundColor: color.primary }}>
+                                        {member.FIRST_NAME.charAt(0)}
+                                        {member.LAST_NAME.charAt(0)}
+                                    </div>
+                                    {member.MESSAGE && (
+                                        <div className="Message">
+                                            {member.MESSAGE}
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <>
+                                    {member.MESSAGE && (
+                                        <div className="Message">
+                                            {member.MESSAGE}
+                                        </div>
+                                    )}
+                                    <div className="User-initials" style={{ backgroundColor: color.primary }}>
+                                        {member.FIRST_NAME.charAt(0)}
+                                        {member.LAST_NAME.charAt(0)}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    );
+                })}
+
+
+
+
+
+
             </div>
+
             <div className="Bottom">
 
                 <button
@@ -125,7 +268,18 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
                     </svg>
                 </button>
 
-                <input></input>
+
+
+
+                <input
+                    placeholder="Your message here"
+                    value={messageInput}
+                    onChange={handleMessageInputChnage}>
+                </input>
+
+
+
+
 
                 <div className="Message-Buttons">
 
@@ -140,7 +294,7 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
                     </svg>
 
                     <svg
-                        onClick={() => { console.log("Send message clicked") }}
+                        onClick={handleSendMessage}
                         className="Send-btn"
                         width="30px"
                         height="30px"

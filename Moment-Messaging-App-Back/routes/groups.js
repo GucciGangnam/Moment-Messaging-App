@@ -20,6 +20,8 @@ router.get('/getgroupinfo', authenticator_controller.validateAccessToken, group_
 router.post('/leavegroupbyid', authenticator_controller.validateAccessToken, group_controller.leavegroupbyid)
 // Add memebr to group 
 router.put('/addgroupmember', authenticator_controller.validateAccessToken, group_controller.addgroupmember)
+// Send Message
+router.put('/sendmessage', authenticator_controller.validateAccessToken, group_controller.sendmessage)
 
 // DELETE //
 

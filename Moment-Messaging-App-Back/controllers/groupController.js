@@ -33,6 +33,8 @@ exports.create_group = asyncHandler(async (req, res, next) => {
                 ID: admin.ID,
                 FIRST_NAME: admin.FIRST_NAME,
                 LAST_NAME: admin.LAST_NAME,
+                MESSAGE: '',
+                POST_TIME: null
             }],
         });
         // Add the group to the admin's groups array 
@@ -97,12 +99,9 @@ exports.leavegroupbyid = asyncHandler(async (req, res, next) => {
     console.log('group removed from user')
 
     // Remove userId from groupObject.MEMBERS
+    groupObject.MEMBERS = groupObject.MEMBERS.filter(member => member.ID !== req.userId);
     groupObject.MEMBERS.pull(req.userId);
     await groupObject.save();
-    console.log('user removed from group')
-
-    // console.log('groupObject.MEMBERS:', groupObject.MEMBERS);
-    // console.log('req.userId:', req.userId);
 
     // Once that's done, if groupObject.MEMBERS is empty, delete the entire group
 
@@ -133,7 +132,7 @@ exports.addgroupmember = asyncHandler(async (req, res, next) => {
 
         // Step 2: Find the member to add by their ID
         const memberToAdd = await User.findOne({ ID: req.body.memberToAdd });
-        
+
         if (!memberToAdd) {
             return res.status(404).json({ message: "Member not found." });
         }
@@ -148,7 +147,9 @@ exports.addgroupmember = asyncHandler(async (req, res, next) => {
         group.MEMBERS.push({
             ID: memberToAdd.ID,
             FIRST_NAME: memberToAdd.FIRST_NAME,
-            LAST_NAME: memberToAdd.LAST_NAME
+            LAST_NAME: memberToAdd.LAST_NAME,
+            MESSAGE: '',
+            POST_TIME: null
         });
 
         await group.save();
@@ -165,5 +166,46 @@ exports.addgroupmember = asyncHandler(async (req, res, next) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+exports.sendmessage = asyncHandler(async (req, res, next) => {
+    console.log("route sendMessage started")
+    try {
+        const user = req.userId;
+        const groupId = req.body.groupId;
+        const message = req.body.message;
+
+        // Fetch the group details from the database
+        const group = await Group.findOne({ ID: groupId });
+
+        // Check if the group exists
+        if (!group) {
+            return res.status(404).json({ message: 'Group not found' });
+        }
+
+        // Check if the user is a member of the group
+        const isMember = group.MEMBERS.some(member => member.ID === user);
+
+        if (!isMember) {
+            return res.status(403).json({ message: 'Forbidden: You are not a member of this group' });
+        }
+
+        // Find the member in the group and update their message
+        const updatedMembers = group.MEMBERS.map(member => {
+            if (member.ID === user) {
+                return { ...member, MESSAGE: message }; // Update the message for the current user
+            }
+            return member;
+        });
+
+        // Update the group with the modified members array
+        await Group.updateOne({ ID: groupId }, { MEMBERS: updatedMembers });
+
+        // Send a success response
+        res.status(200).json({ message: 'Message sent successfully' });
+    } catch (error) {
+        // If an error occurs, pass it to the error handling middleware
+        next(error);
     }
 });
