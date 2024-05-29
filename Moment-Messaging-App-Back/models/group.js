@@ -13,11 +13,15 @@ const groupsSchema = new Schema({
     },
     ROOM_NAME: {
         type: String,
-        required: true,
+        required: false,
     },
     ROOM_TIMER: { 
         type: Date,
         required: false
+    },
+    ROOM_CREATOR: {
+        type: String,
+        required: false,
     },
     ADMIN: {
         ID: {

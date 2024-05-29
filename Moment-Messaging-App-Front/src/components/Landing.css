@@ -9,4 +9,9 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+}
+
+.Landing img{ 
+    max-width: 100%;
 }

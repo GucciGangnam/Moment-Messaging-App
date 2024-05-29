@@ -21,6 +21,11 @@ export const Room = ({ currentGroupOBJ, userData }) => {
     const [offlineGroupOBJ, setOfflineGroupOBJ] = useState({});
     const messageTimers = useRef({});  // Use ref to store timers
 
+    // UE to log offlineGroup OBJ when updated
+    useEffect(() => { 
+        console.log(offlineGroupOBJ)
+    },[offlineGroupOBJ])
+
     // STEP 1 - Fetch most up to date group OBJ
     const fetchUpToDtaGroup = async () => {
         const requestOptions = {
@@ -36,7 +41,7 @@ export const Room = ({ currentGroupOBJ, userData }) => {
             if (!response.ok) {
                 console.log('Error:', data);
             } else {
-                console.log(data.group);
+                // console.log(data.group);
                 setOfflineGroupOBJ(data.group);
             }
         } catch (error) {
@@ -65,15 +70,16 @@ export const Room = ({ currentGroupOBJ, userData }) => {
         // LISTEN for update group data?
         socket.on('member-added', fetchUpToDtaGroup);
 
-
         // LISTEN  relay-message
         socket.on('relay-message', (OBJ) => {
             const message = OBJ.message;
             const userId = OBJ.user;
             console.log(OBJ);
+            // setTime(300);
 
             setOfflineGroupOBJ(prevOfflineGroupOBJ => {
                 const memberIndex = prevOfflineGroupOBJ.MEMBERS.findIndex(member => member.ID === userId);
+                const username = prevOfflineGroupOBJ.MEMBERS[memberIndex].FIRST_NAME
                 if (memberIndex !== -1) {
                     const updatedMembers = [...prevOfflineGroupOBJ.MEMBERS];
                     updatedMembers[memberIndex].MESSAGE = message;
@@ -107,10 +113,22 @@ export const Room = ({ currentGroupOBJ, userData }) => {
                         });
                     }, timeoutDuration);
 
-                    return {
-                        ...prevOfflineGroupOBJ,
-                        MEMBERS: updatedMembers
-                    };
+                    // Update room name and creator only if they are initially null
+                    if (prevOfflineGroupOBJ.ROOM_NAME === null && prevOfflineGroupOBJ.ROOM_CREATOR === null) {
+                        return {
+                            ...prevOfflineGroupOBJ,
+                            MEMBERS: updatedMembers,
+                            ROOM_TIMER: new Date(), // Update ROOM_TIMER to the current date and time
+                            ROOM_NAME: message,
+                            ROOM_CREATOR: username
+                        };
+                    } else {
+                        return {
+                            ...prevOfflineGroupOBJ,
+                            MEMBERS: updatedMembers,
+                            ROOM_TIMER: new Date() // Update ROOM_TIMER to the current date and time
+                        };
+                    }
                 } else {
                     console.error('Member not found in offlineGroupOBJ');
                     return prevOfflineGroupOBJ; // Return the previous state unchanged
@@ -129,7 +147,7 @@ export const Room = ({ currentGroupOBJ, userData }) => {
             messageTimers.current = {};
         };
 
-        
+
     }, [currentGroupOBJ.ID]);
 
     /////////////////////////// SOCKET IO ////////////////////////////////
@@ -174,7 +192,7 @@ export const Room = ({ currentGroupOBJ, userData }) => {
     };
 
     // FUNCTION TO EMIT NEW MEMBER
-    const memberAdded = () => { 
+    const memberAdded = () => {
         socket.emit('member-added')
     }
 
@@ -218,6 +236,9 @@ export const Room = ({ currentGroupOBJ, userData }) => {
     }, [handleSendMessage]);
 
     ///
+    // TIMER
+    ///
+// const timerStartFrom =  offlineGroupOBJ.ROOM_TIMER
 
 
 
@@ -305,15 +326,15 @@ export const Room = ({ currentGroupOBJ, userData }) => {
                             {offlineGroupOBJ && offlineGroupOBJ.ROOM_NAME ? (
                                 <div>{offlineGroupOBJ.ROOM_NAME}</div>
                             ) : (
-                                <div>Loading...</div>
+                                <div>Inactive</div>
                             )}
                         </div>
                         <div className="Room-meta">
                             <div className="Room-creator">
-                                Created by ADD ROOM CREATOR
+                                Created by {offlineGroupOBJ.ROOM_CREATOR}
                             </div>
                             <div className="Room-timer">
-                                TIMER
+                                {/* // render  countdown to 0 starting from (timerStartFrom) */}
                             </div>
                         </div>
                     </div>
