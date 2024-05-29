@@ -22,9 +22,9 @@ export const Room = ({ currentGroupOBJ, userData }) => {
     const messageTimers = useRef({});  // Use ref to store timers
 
     // UE to log offlineGroup OBJ when updated
-    useEffect(() => { 
+    useEffect(() => {
         console.log(offlineGroupOBJ)
-    },[offlineGroupOBJ])
+    }, [offlineGroupOBJ])
 
     // STEP 1 - Fetch most up to date group OBJ
     const fetchUpToDtaGroup = async () => {
@@ -140,8 +140,14 @@ export const Room = ({ currentGroupOBJ, userData }) => {
         return () => {
             socket.off('relay-message');
             socket.off('member-added');
+            // Handle socket disconnection
+            socket.on('disconnect', () => {
+                console.log('Socket disconnected 1');
+                // Add your custom logic here for what to do when the socket disconnects
+                // For example, you could show a message to the user or attempt to reconnect
+            });
             socket.disconnect();
-            console.log('Disconnected from socket');
+            console.log('Disconnected from socket 2');
             // Clear all timers when component unmounts
             Object.values(messageTimers.current).forEach(clearTimeout);
             messageTimers.current = {};
@@ -238,7 +244,7 @@ export const Room = ({ currentGroupOBJ, userData }) => {
     ///
     // TIMER
     ///
-// const timerStartFrom =  offlineGroupOBJ.ROOM_TIMER
+    // const timerStartFrom =  offlineGroupOBJ.ROOM_TIMER
 
 
 
