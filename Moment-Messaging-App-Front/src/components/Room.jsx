@@ -62,7 +62,9 @@ export const Room = ({ currentGroupOBJ, userData }) => {
         // EMIT JOIN ROOM 
         socket.emit("join-room", currentGroupOBJ.ID);
 
-        // EMIT add member
+        // LISTEN for update group data?
+        socket.on('member-added', fetchUpToDtaGroup);
+
 
         // LISTEN  relay-message
         socket.on('relay-message', (OBJ) => {
@@ -81,7 +83,15 @@ export const Room = ({ currentGroupOBJ, userData }) => {
                         clearTimeout(messageTimers.current[userId]);
                     }
 
-                    // Set a new timer to reset the message after 10 seconds
+                    // Set timeout duration based on message length
+                    let timeoutDuration = 3000;
+                    if (message.length > 100 && message.length <= 200) {
+                        timeoutDuration = 5000; // 5 seconds
+                    } else if (message.length > 200) {
+                        timeoutDuration = 7000; // 7 seconds
+                    }
+
+                    // Set a new timer to reset the message after 3 seconds
                     messageTimers.current[userId] = setTimeout(() => {
                         setOfflineGroupOBJ(prevState => {
                             const memberIndex = prevState.MEMBERS.findIndex(member => member.ID === userId);
@@ -95,7 +105,7 @@ export const Room = ({ currentGroupOBJ, userData }) => {
                             }
                             return prevState;
                         });
-                    }, 3000);
+                    }, timeoutDuration);
 
                     return {
                         ...prevOfflineGroupOBJ,
@@ -111,12 +121,15 @@ export const Room = ({ currentGroupOBJ, userData }) => {
         // CLEAN UP
         return () => {
             socket.off('relay-message');
+            socket.off('member-added');
             socket.disconnect();
             console.log('Disconnected from socket');
             // Clear all timers when component unmounts
             Object.values(messageTimers.current).forEach(clearTimeout);
             messageTimers.current = {};
         };
+
+        
     }, [currentGroupOBJ.ID]);
 
     /////////////////////////// SOCKET IO ////////////////////////////////
@@ -161,6 +174,9 @@ export const Room = ({ currentGroupOBJ, userData }) => {
     };
 
     // FUNCTION TO EMIT NEW MEMBER
+    const memberAdded = () => { 
+        socket.emit('member-added')
+    }
 
 
     // Add Memebr Compoenent 
@@ -186,16 +202,16 @@ export const Room = ({ currentGroupOBJ, userData }) => {
         socket.emit("send-message", messageInput, userData.userInfo.ID);
         setMessageInput("");
     }, [messageInput, userData.userInfo.ID]); // Dependencies of handleSendMessage
-    
+
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (event.keyCode === 13) {
                 handleSendMessage();
             }
         };
-    
+
         document.addEventListener("keydown", handleKeyDown);
-    
+
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
@@ -277,6 +293,7 @@ export const Room = ({ currentGroupOBJ, userData }) => {
                             userData={userData}
                             offlineGroupOBJ={offlineGroupOBJ}
                             setOfflineGroupOBJ={setOfflineGroupOBJ}
+                            memberAdded={memberAdded}
                         />
                     )}
 
@@ -388,7 +405,7 @@ export const Room = ({ currentGroupOBJ, userData }) => {
 
 
 
-                    
+
 
                 </div>
 

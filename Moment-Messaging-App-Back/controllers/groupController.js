@@ -24,6 +24,7 @@ exports.create_group = asyncHandler(async (req, res, next) => {
             ID: "GID" + uuidv4(),
             NAME: req.body.groupName,
             ROOM_NAME: req.body.groupName,
+            ROOM_TIMER: null,
             ADMIN: {
                 ID: admin.ID,
                 FIRST_NAME: admin.FIRST_NAME,

@@ -9,7 +9,7 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 // COMPOENNT 
 
-export const AddMember = ({ userData, offlineGroupOBJ, setOfflineGroupOBJ }) => {
+export const AddMember = ({ userData, offlineGroupOBJ, setOfflineGroupOBJ, memberAdded }) => {
 
     // Add member to group function
     const addMemberToGroup = async (contact) => {
@@ -45,6 +45,7 @@ export const AddMember = ({ userData, offlineGroupOBJ, setOfflineGroupOBJ }) => 
                     ]
                 }));
                 console.log(data);
+                memberAdded();
             }
         } catch (error) {
             console.error('Fetch error:', error);

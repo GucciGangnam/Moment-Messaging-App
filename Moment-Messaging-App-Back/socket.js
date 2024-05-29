@@ -11,6 +11,12 @@ module.exports = (io) => {
 
         // USER UPDATES TO GROUP
         // Join group 
+        socket.on('member-added', () => { 
+            console.log('member-added');
+            // Emit 'request-to-update-group-data' to everyone in the room
+            io.to([...socket.rooms][1]).emit("member-added");
+        });
+
         // leave group
         // send message     
         
