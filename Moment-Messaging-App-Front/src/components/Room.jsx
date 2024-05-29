@@ -65,6 +65,9 @@ export const Room = ({ currentGroupOBJ, userData }) => {
             socket.emit("join-room", currentGroupOBJ.ID);
         });
 
+        // EMIT JOIN ROOM 
+        socket.emit("join-room", currentGroupOBJ.ID);
+
 
 
         // LISTEN for update group data?
