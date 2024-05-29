@@ -61,11 +61,11 @@ export const Room = ({ currentGroupOBJ, userData }) => {
         // Once connected, send the currentGroupOBJ to the server
         socket.on('connect', () => {
             console.log('Connected to socket');
-            // socket.emit('join-room', currentGroupOBJ.ID);  // Send currentGroupOBJ to the server
+            // EMIT JOIN ROOM 
+            socket.emit("join-room", currentGroupOBJ.ID);
         });
 
-        // EMIT JOIN ROOM 
-        socket.emit("join-room", currentGroupOBJ.ID);
+
 
         // LISTEN for update group data?
         socket.on('member-added', fetchUpToDtaGroup);
