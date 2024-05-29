@@ -49,6 +49,7 @@ export const Room = ({ currentGroupOBJ, userData }) => {
         }
     }
 
+    const [socketConnected, setSocketConnected] = useState("")
     // ON GROUP CHANGE
     useEffect(() => {
         // FETCH MOST UP TO DATA GROUP OBJ
@@ -61,6 +62,7 @@ export const Room = ({ currentGroupOBJ, userData }) => {
         // Once connected, send the currentGroupOBJ to the server
         socket.on('connect', () => {
             console.log('Connected to socket');
+            setSocketConnected("Online")
             // EMIT JOIN ROOM 
             socket.emit("join-room", currentGroupOBJ.ID);
         });
@@ -146,6 +148,7 @@ export const Room = ({ currentGroupOBJ, userData }) => {
             // Handle socket disconnection
             socket.on('disconnect', () => {
                 console.log('Socket disconnected 1');
+                setSocketConnected("Offline")
                 // Add your custom logic here for what to do when the socket disconnects
                 // For example, you could show a message to the user or attempt to reconnect
             });
@@ -350,7 +353,7 @@ export const Room = ({ currentGroupOBJ, userData }) => {
                 </div>
 
                 <div className="Top-Right">
-
+                            {socketConnected}
                 </div>
 
             </div>
