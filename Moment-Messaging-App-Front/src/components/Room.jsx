@@ -429,7 +429,7 @@ export const Room = ({ currentGroupOBJ, userData }) => {
 
                     <svg
                         onChange={handleMessageInputChnage}
-                        onClick={handleSendMessage}
+                        onClick={socketConnected === "Online" ? handleSendMessage : null}
                         className="Send-btn"
                         width="30px"
                         height="30px"
