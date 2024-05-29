@@ -12,9 +12,10 @@ const group_controller = require('../controllers/groupController');
 router.post('/creategroup', authenticator_controller.validateAccessToken, group_controller.create_group)
 
 // READ // 
-// Read: Get a particular group by ID
+// Read: Get all users groups by ID
 router.get('/getgroupinfo', authenticator_controller.validateAccessToken, group_controller.getgroupinfo)
-
+// Read: Get a particulat group by ID
+router.get('/getSingGroupInfo/:id', authenticator_controller.validateAccessToken, group_controller.getSingGroupInfo)
 // UPDATE // 
 // leave group 
 router.post('/leavegroupbyid', authenticator_controller.validateAccessToken, group_controller.leavegroupbyid)

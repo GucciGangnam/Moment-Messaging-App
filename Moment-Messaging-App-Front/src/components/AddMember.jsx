@@ -9,21 +9,10 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 // COMPOENNT 
 
-export const AddMember = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupData }) => {
+export const AddMember = ({ userData, offlineGroupOBJ, setOfflineGroupOBJ }) => {
 
-    // Find the index of the group object in userGroupData that matches the currentGroupOBJ ID
-    const groupIndex = userGroupData.findIndex(group => group.ID === currentGroupOBJ.ID);
-
-    //Filter contacts for those not in group
-    const userContacts = userData.userInfo.CONTACTS;
-    const groupMembers = userGroupData[groupIndex].MEMBERS;
-    // Extract IDs of group members for easy lookup
-    const groupMemberIds = groupMembers.map(member => member.ID);
-    // Filter out contacts that are already group members
-    const filteredContacts = userContacts.filter(contact => !groupMemberIds.includes(contact.ID));
-
-
-    const handleAddContacttoGroup = async (contactID) => {
+    // Add member to group function
+    const addMemberToGroup = async (contact) => {
         const requestOptions = {
             method: 'PUT',
             headers: {
@@ -31,37 +20,64 @@ export const AddMember = ({ currentGroupOBJ, userData, getUserAccountInfo, userG
                 'Authorization': `Bearer ${localStorage.getItem('UserAccessToken')}`
             },
             body: JSON.stringify({
-                "group": userGroupData[groupIndex].ID,
-                "memberToAdd": contactID
+                group: offlineGroupOBJ.ID,
+                memberToAdd: contact.ID
             })
         };
         try {
             const response = await fetch(`${backendUrl}/groups/addgroupmember`, requestOptions);
-            const responseData = await response.json();
+            const data = await response.json();
             if (!response.ok) {
-                console.log(responseData)
-                getUserAccountInfo();
+                console.log(data);
             } else {
-                console.log(responseData)
-                getUserAccountInfo();
+                // Update the local state with the new member if the response is okay
+                setOfflineGroupOBJ(prevState => ({
+                    ...prevState,
+                    MEMBERS: [
+                        ...prevState.MEMBERS,
+                        {
+                            ID: contact.ID,
+                            FIRST_NAME: contact.FIRST_NAME,
+                            LAST_NAME: contact.LAST_NAME,
+                            MESSAGE: '',
+                            POST_TIME: null
+                        }
+                    ]
+                }));
+                console.log(data);
             }
         } catch (error) {
-            console.error(error);
-            // Set fetch error to true
+            console.error('Fetch error:', error);
         }
     }
+
+    const userContactsArray = userData.userInfo.CONTACTS;
+    const currentGroupMembersArray = offlineGroupOBJ.MEMBERS;
+
+    // Filter out contacts that are already in the group members array
+    const filteredContacts = userContactsArray.filter(contact =>
+        !currentGroupMembersArray.some(member => member.ID === contact.ID)
+    );
 
     return (
         <div className="AddMember">
             Contacts
             {filteredContacts.map(contact => (
                 <div
-                    onClick={() => { handleAddContacttoGroup(contact.ID) }}
+                    key={contact.ID}
                     className="Contact"
-                    key={contact.ID}>
+                    onClick={() => { addMemberToGroup(contact) }}>
                     {contact.FIRST_NAME} {contact.LAST_NAME}
                 </div>
             ))}
         </div>
     );
 };
+
+
+// IF THE RESPONSE IS OK =>
+//// YOU NEED TO SET THE OFFLINE GROUP OBJ TO INCLIUDE TEH NEW MEMEBR
+//// send it to server
+//// relay from server 
+//// setOfflineGroupOBJ to no data received from server
+

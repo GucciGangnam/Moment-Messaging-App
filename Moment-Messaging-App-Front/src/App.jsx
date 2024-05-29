@@ -37,10 +37,10 @@ export const App = () => {
   const [currentGroupOBJ, setCurrentGroupOBJ] = useState('')
 
   ///////////////////////////////////////// USE EFFECT TO LOG CURRENTGROUPOBJ WHEN UPDATED
-  useEffect(() => { 
-    console.log('current group OBJ next: ')
-    console.log(currentGroupOBJ)
-  },[currentGroupOBJ])
+  // useEffect(() => { 
+  //   console.log('current group OBJ next: ')
+  //   console.log(currentGroupOBJ)
+  // },[currentGroupOBJ])
     ///////////////////////////////////////// USE EFFECT TO LOG CURRENTGROUPOBJ WHEN UPDATED
 
 
@@ -117,10 +117,10 @@ export const App = () => {
   }
 
 ///////////////////////////////////////// USE EFFECT TO LOG USERGROUPDATA WHEN UPDATED
-  useEffect(() => { 
-    console.log('user group data next: ')
-    console.log(userGroupData)
-  },[userGroupData])
+  // useEffect(() => { 
+  //   console.log('user group data next: ')
+  //   console.log(userGroupData)
+  // },[userGroupData])
   ///////////////////////////////////////// USE EFFECT TO LOG USERGROUPDATA WHEN UPDATED
 
 
@@ -198,6 +198,7 @@ export const App = () => {
           getUserAccountInfo={getUserAccountInfo}
           userGroupData={userGroupData}
           setCurrentGroupOBJ={setCurrentGroupOBJ}
+          getGroupData={getGroupData}
         />
       )}
 
@@ -207,10 +208,9 @@ export const App = () => {
         :
         <Room 
         // Dont need to pass in currentGroupOBJ but instead need to pass in userGroupData.[which ever object has the same ID as currentGroupOBJ.ID]
-        userGroupData={userGroupData}
         currentGroupOBJ={currentGroupOBJ}
         userData={userData}
-        getUserAccountInfo={getUserAccountInfo}/>
+      />
       }
     </div>
   );

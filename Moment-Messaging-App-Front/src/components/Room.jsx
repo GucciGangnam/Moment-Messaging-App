@@ -1,19 +1,125 @@
 // IMPORTS 
 // React 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 // Styles 
-import "./Room.css"
-// Compoennets 
+import "./Room.css";
+// Components 
 import { AddMember } from "./AddMember";
 import { ViewMembers } from "./ViewMembers";
 // Variables 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
+// Socket IO 
+import { io } from 'socket.io-client';
 
-
-
+// Initialize socket outside the component to avoid reinitializing on every render
+const socket = io(backendUrl, {
+    withCredentials: true,
+});
 
 // COMPONENTS 
-export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupData }) => {
+export const Room = ({ currentGroupOBJ, userData }) => {
+    const [offlineGroupOBJ, setOfflineGroupOBJ] = useState({});
+    const messageTimers = useRef({});  // Use ref to store timers
+
+    // STEP 1 - Fetch most up to date group OBJ
+    const fetchUpToDtaGroup = async () => {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('UserAccessToken')}`
+            },
+        };
+        try {
+            const response = await fetch(`${backendUrl}/groups/getSingGroupInfo/${currentGroupOBJ.ID}`, requestOptions);
+            const data = await response.json(); // Parse the JSON body
+            if (!response.ok) {
+                console.log('Error:', data);
+            } else {
+                console.log(data.group);
+                setOfflineGroupOBJ(data.group);
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+        }
+    }
+
+    // ON GROUP CHANGE
+    useEffect(() => {
+        // FETCH MOST UP TO DATA GROUP OBJ
+        fetchUpToDtaGroup();
+        console.log("ROOM MOUNTED");
+        setMessageInput("");
+        // Connect to socket when the component mounts
+        socket.connect();
+
+        // Once connected, send the currentGroupOBJ to the server
+        socket.on('connect', () => {
+            console.log('Connected to socket');
+            // socket.emit('join-room', currentGroupOBJ.ID);  // Send currentGroupOBJ to the server
+        });
+
+        // EMIT JOIN ROOM 
+        socket.emit("join-room", currentGroupOBJ.ID);
+
+        // EMIT add member
+
+        // LISTEN  relay-message
+        socket.on('relay-message', (OBJ) => {
+            const message = OBJ.message;
+            const userId = OBJ.user;
+            console.log(OBJ);
+
+            setOfflineGroupOBJ(prevOfflineGroupOBJ => {
+                const memberIndex = prevOfflineGroupOBJ.MEMBERS.findIndex(member => member.ID === userId);
+                if (memberIndex !== -1) {
+                    const updatedMembers = [...prevOfflineGroupOBJ.MEMBERS];
+                    updatedMembers[memberIndex].MESSAGE = message;
+
+                    // Clear existing timer for the user if it exists
+                    if (messageTimers.current[userId]) {
+                        clearTimeout(messageTimers.current[userId]);
+                    }
+
+                    // Set a new timer to reset the message after 10 seconds
+                    messageTimers.current[userId] = setTimeout(() => {
+                        setOfflineGroupOBJ(prevState => {
+                            const memberIndex = prevState.MEMBERS.findIndex(member => member.ID === userId);
+                            if (memberIndex !== -1) {
+                                const resetMembers = [...prevState.MEMBERS];
+                                resetMembers[memberIndex].MESSAGE = "";
+                                return {
+                                    ...prevState,
+                                    MEMBERS: resetMembers
+                                };
+                            }
+                            return prevState;
+                        });
+                    }, 3000);
+
+                    return {
+                        ...prevOfflineGroupOBJ,
+                        MEMBERS: updatedMembers
+                    };
+                } else {
+                    console.error('Member not found in offlineGroupOBJ');
+                    return prevOfflineGroupOBJ; // Return the previous state unchanged
+                }
+            });
+        });
+
+        // CLEAN UP
+        return () => {
+            socket.off('relay-message');
+            socket.disconnect();
+            console.log('Disconnected from socket');
+            // Clear all timers when component unmounts
+            Object.values(messageTimers.current).forEach(clearTimeout);
+            messageTimers.current = {};
+        };
+    }, [currentGroupOBJ.ID]);
+
+    /////////////////////////// SOCKET IO ////////////////////////////////
 
     const colors = {
         "red": {
@@ -49,21 +155,13 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
             secondary: "#e0e0e0"
         }
     };
-
     const getColor = (index) => {
         const colorKeys = Object.keys(colors);
         return colors[colorKeys[index % colorKeys.length]];
     };
 
+    // FUNCTION TO EMIT NEW MEMBER
 
-
-
-    ////////// DELETE ME ///////// DUMMY MESSAGES ////////// DELETE ME ///////// DUMMY MESSAGES //////////
-
-    ////////// DELETE ME ///////// DUMMY MESSAGES ////////// DELETE ME ///////// DUMMY MESSAGES //////////
-
-    // Find the index of the group object in userGroupData that matches the currentGroupOBJ ID
-    const groupIndex = userGroupData.findIndex(group => group.ID === currentGroupOBJ.ID);
 
     // Add Memebr Compoenent 
     const [addMemberShowing, setAddMemberShowing] = useState(false);
@@ -80,34 +178,31 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
         setMessageInput(e.target.value)
     }
     // Send BTN 
-    const handleSendMessage = async() => {
-        console.log(messageInput);
-
-        const requestOptions = {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('UserAccessToken')}`
-            },
-            body: JSON.stringify({
-                groupId: userGroupData[groupIndex].ID,
-                message: messageInput
-            })
-        };
-        try {
-            const response = await fetch(`${backendUrl}/groups/sendmessage`, requestOptions);
-            if (!response.ok) {
-                console.log("NOT OK")
-                console.log(response)
-                throw new Error('Network response was not ok');
-            } else {
-                console.log("res OK");
-                console.log(response)
-            }
-        } catch (error) {
-            console.error('Fetch error:', error);
+    // handle send message // WARNING THIS IS CAUSING A RERENDER ON EVER KEY STROKE!!!!
+    const handleSendMessage = useCallback(() => {
+        if (messageInput === "") {
+            return;
         }
-    }
+        socket.emit("send-message", messageInput, userData.userInfo.ID);
+        setMessageInput("");
+    }, [messageInput, userData.userInfo.ID]); // Dependencies of handleSendMessage
+    
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.keyCode === 13) {
+                handleSendMessage();
+            }
+        };
+    
+        document.addEventListener("keydown", handleKeyDown);
+    
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [handleSendMessage]);
+
+    ///
+
 
 
     return (
@@ -116,8 +211,11 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
             <div className="Top">
 
                 <div className="Top-left">
-
-                    {userGroupData[groupIndex].MEMBERS.length}
+                    {offlineGroupOBJ && offlineGroupOBJ.MEMBERS ? (
+                        <div>{offlineGroupOBJ.MEMBERS.length}</div>
+                    ) : (
+                        <div>Loading...</div>
+                    )}
                     <svg
                         onClick={() => {
                             setViewMembersShowing(prevState => {
@@ -154,10 +252,7 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
                     </svg>
                     {viewMembersShowing && (
                         <ViewMembers
-                            currentGroupOBJ={currentGroupOBJ}
-                            userGroupData={userGroupData}
-                            userData={userData}
-                            getUserAccountInfo={getUserAccountInfo} />
+                            offlineGroupOBJ={offlineGroupOBJ} />
                     )}
 
 
@@ -179,10 +274,10 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
                     </svg>
                     {addMemberShowing && (
                         <AddMember
-                            currentGroupOBJ={currentGroupOBJ}
-                            userGroupData={userGroupData}
                             userData={userData}
-                            getUserAccountInfo={getUserAccountInfo} />
+                            offlineGroupOBJ={offlineGroupOBJ}
+                            setOfflineGroupOBJ={setOfflineGroupOBJ}
+                        />
                     )}
 
                 </div>
@@ -190,11 +285,15 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
                 <div className="Top-min">
                     <div className="Room-info">
                         <div className="Room-title">
-                            {userGroupData[groupIndex].ROOM_NAME}
+                            {offlineGroupOBJ && offlineGroupOBJ.ROOM_NAME ? (
+                                <div>{offlineGroupOBJ.ROOM_NAME}</div>
+                            ) : (
+                                <div>Loading...</div>
+                            )}
                         </div>
                         <div className="Room-meta">
                             <div className="Room-creator">
-                                Created by {userGroupData[groupIndex].ADMIN.FIRST_NAME} {userGroupData[groupIndex].ADMIN.LAST_NAME}
+                                Created by ADD ROOM CREATOR
                             </div>
                             <div className="Room-timer">
                                 TIMER
@@ -213,46 +312,31 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
 
 
             <div className="Main">
-
-                {userGroupData[groupIndex].MEMBERS.map((member, index) => {
-                    const color = getColor(index);
-                    return (
-                        <div className="Message-div" key={member.ID} style={{ backgroundColor: color.secondary }}>
-                            {index % 2 === 0 ? (
-                                <>
-                                    <div className="User-initials" style={{ backgroundColor: color.primary }}>
-                                        {member.FIRST_NAME.charAt(0)}
-                                        {member.LAST_NAME.charAt(0)}
-                                    </div>
-                                    {member.MESSAGE && (
-                                        <div className="Message">
-                                            {member.MESSAGE}
-                                        </div>
-                                    )}
-                                </>
-                            ) : (
-                                <>
-                                    {member.MESSAGE && (
-                                        <div className="Message">
-                                            {member.MESSAGE}
-                                        </div>
-                                    )}
-                                    <div className="User-initials" style={{ backgroundColor: color.primary }}>
-                                        {member.FIRST_NAME.charAt(0)}
-                                        {member.LAST_NAME.charAt(0)}
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    );
-                })}
-
-
-
-
-
-
+                {offlineGroupOBJ.MEMBERS ? (
+                    offlineGroupOBJ.MEMBERS.map((member, index) => {
+                        const color = getColor(index);
+                        return (
+                            <div
+                                key={member.ID}
+                                className={member.MESSAGE !== "" ? "Message-div" : "No-message-div"}
+                                style={{ backgroundColor: color.secondary }}>
+                                <div className="User-initials" style={{ backgroundColor: color.primary }}>
+                                    {member.FIRST_NAME.charAt(0)}{member.LAST_NAME.charAt(0)}
+                                </div>
+                                {member.MESSAGE && (
+                                    <div className="Message">{member.MESSAGE}</div>
+                                )}
+                            </div>
+                        );
+                    })
+                ) : (
+                    <div>No members available</div>
+                )}
             </div>
+
+
+
+
 
             <div className="Bottom">
 
@@ -268,18 +352,11 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
                     </svg>
                 </button>
 
-
-
-
                 <input
                     placeholder="Your message here"
                     value={messageInput}
                     onChange={handleMessageInputChnage}>
                 </input>
-
-
-
-
 
                 <div className="Message-Buttons">
 
@@ -293,7 +370,12 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
                         <path d="M19.1835 7.80516L16.2188 4.83755C14.1921 2.8089 13.1788 1.79457 12.0904 2.03468C11.0021 2.2748 10.5086 3.62155 9.5217 6.31506L8.85373 8.1381C8.59063 8.85617 8.45908 9.2152 8.22239 9.49292C8.11619 9.61754 7.99536 9.72887 7.86251 9.82451C7.56644 10.0377 7.19811 10.1392 6.46145 10.3423C4.80107 10.8 3.97088 11.0289 3.65804 11.5721C3.5228 11.8069 3.45242 12.0735 3.45413 12.3446C3.45809 12.9715 4.06698 13.581 5.28476 14.8L6.69935 16.2163L2.22345 20.6964C1.92552 20.9946 1.92552 21.4782 2.22345 21.7764C2.52138 22.0746 3.00443 22.0746 3.30236 21.7764L7.77841 17.2961L9.24441 18.7635C10.4699 19.9902 11.0827 20.6036 11.7134 20.6045C11.9792 20.6049 12.2404 20.5358 12.4713 20.4041C13.0192 20.0914 13.2493 19.2551 13.7095 17.5825C13.9119 16.8472 14.013 16.4795 14.2254 16.1835C14.3184 16.054 14.4262 15.9358 14.5468 15.8314C14.8221 15.593 15.1788 15.459 15.8922 15.191L17.7362 14.4981C20.4 13.4973 21.7319 12.9969 21.9667 11.9115C22.2014 10.826 21.1954 9.81905 19.1835 7.80516Z" />
                     </svg>
 
+
+
+
+
                     <svg
+                        onChange={handleMessageInputChnage}
                         onClick={handleSendMessage}
                         className="Send-btn"
                         width="30px"
@@ -302,6 +384,11 @@ export const Room = ({ currentGroupOBJ, userData, getUserAccountInfo, userGroupD
                         fill="none">
                         <path d="M11.5003 12H5.41872M5.24634 12.7972L4.24158 15.7986C3.69128 17.4424 3.41613 18.2643 3.61359 18.7704C3.78506 19.21 4.15335 19.5432 4.6078 19.6701C5.13111 19.8161 5.92151 19.4604 7.50231 18.7491L17.6367 14.1886C19.1797 13.4942 19.9512 13.1471 20.1896 12.6648C20.3968 12.2458 20.3968 11.7541 20.1896 11.3351C19.9512 10.8529 19.1797 10.5057 17.6367 9.81135L7.48483 5.24303C5.90879 4.53382 5.12078 4.17921 4.59799 4.32468C4.14397 4.45101 3.77572 4.78336 3.60365 5.22209C3.40551 5.72728 3.67772 6.54741 4.22215 8.18767L5.24829 11.2793C5.34179 11.561 5.38855 11.7019 5.407 11.8459C5.42338 11.9738 5.42321 12.1032 5.40651 12.231C5.38768 12.375 5.34057 12.5157 5.24634 12.7972Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
+
+
+
+
+                    
 
                 </div>
 

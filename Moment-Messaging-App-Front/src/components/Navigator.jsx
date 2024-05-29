@@ -9,7 +9,7 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 
 // COMPONENT
-export const Navigator = ({ toggleTheme, isDarkMode, handleLogout, userData, getUserAccountInfo, userGroupData, setCurrentGroupOBJ }) => {
+export const Navigator = ({ toggleTheme, isDarkMode, handleLogout, userData, getUserAccountInfo, userGroupData, setCurrentGroupOBJ, getGroupData }) => {
 
     // DELETE SECTION 
 
@@ -112,7 +112,6 @@ export const Navigator = ({ toggleTheme, isDarkMode, handleLogout, userData, get
     // Add group BTN 
     const addGroup = async (e) => {
         e.stopPropagation();
-        console.log("adding group FE")
         const requestOptions = {
             method: 'POST',
             headers: {
@@ -127,7 +126,7 @@ export const Navigator = ({ toggleTheme, isDarkMode, handleLogout, userData, get
             const response = await fetch(`${backendUrl}/groups/creategroup`, requestOptions);
             // const responseData = await response.json();
             if (!response.ok) {
-                alert("not ok")
+                alert("Please name the group first")
             } else {
                 getUserAccountInfo();
                 setNewGroupName('');
@@ -173,6 +172,7 @@ export const Navigator = ({ toggleTheme, isDarkMode, handleLogout, userData, get
     const [selectedRoom, setSelectedRoom] = useState("");
     // // Enter Room function 
     const openGroup = (group) => {
+        getGroupData();
         setCurrentGroupOBJ(group)
         setSelectedRoom(group.ID)
     }

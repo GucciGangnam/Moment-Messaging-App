@@ -140,30 +140,40 @@
     justify-content: space-around;
 }
 
-@keyframes fadeNeon {
-    0% {
-        box-shadow:
-            0 0 1px limegreen,
-            0 0 3px limegreen,
-            0 0 15px limegreen;
-    }
-    100% {
-        box-shadow: none;
-    }
-}
+
 
 .Room .Message-div {
     background-color: rgb(214, 230, 193);
+    padding: 2px;
     border-radius: 25px;
     display: flex;
     align-items: center;
     transition: 1000ms;
-    width: fit-content;
-    box-shadow:
-        0 0 1px limegreen,
-        0 0 3px limegreen,
-        0 0 15px limegreen;
-    animation: fadeNeon 1s forwards;
+    overflow: hidden;
+    animation: fadeNeonBoxShadow 1s forwards;
+}
+
+@keyframes fadeNeonBoxShadow {
+    0% {
+        box-shadow: 0 0 7px 3px rgba(0, 255, 0, 1); /* Green neon box shadow */
+    }
+    100% {
+        box-shadow: 0 0 0px 0px rgba(0, 255, 0, 1); /* Box shadow size reduced to zero */
+    }
+}
+
+
+
+.Room .No-message-div {
+    background-color: rgb(214, 230, 193);
+    padding: 2px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    transition: 1000ms;
+    overflow: hidden;
+    transition: 1000ms;
+    max-width: 90%;
 }
 
 .Room .User-initials {
@@ -175,15 +185,19 @@
     justify-content: center;
     align-items: center;
     padding: 7px;
-
 }
 
 .Room .Message {
     color: rgb(130, 130, 130);
-    padding-left: 10px;
-    padding-right: 10px;
+    overflow: hidden; /* Ensures content is hidden as width shrinks */
+    padding: 5px;
 
 }
+
+
+
+
+
 
 
 
@@ -198,7 +212,6 @@
     align-items: center;
     gap: 10px;
     border-radius: 10px;
-    ;
 }
 
 .Room .Mic-button {
@@ -243,6 +256,11 @@
     fill: var(--img-selected);
 }
 
+.Room .delete-me{ 
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+}
+
 .Room .Send-btn {
     fill: var(--img-deselected-2);
 }
@@ -250,3 +268,4 @@
 .Room .Send-btn:hover {
     fill: var(--img-selected);
 }
+

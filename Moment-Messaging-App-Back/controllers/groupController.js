@@ -77,6 +77,20 @@ exports.getgroupinfo = asyncHandler(async (req, res, next) => {
     }
 });
 
+exports.getSingGroupInfo = asyncHandler(async (req, res, next) => {
+    try {
+        const group = await Group.findOne({ ID: req.params.id });
+
+        if (!group) {
+            return res.status(404).json({ message: 'Group not found' });
+        }
+
+        res.status(200).json({ group });
+    } catch (error) {
+        console.error('Error fetching group info:', error);
+        next(error); // Pass the error to the error handling middleware
+    }
+});
 
 exports.leavegroupbyid = asyncHandler(async (req, res, next) => {
     // Find the user by ID
