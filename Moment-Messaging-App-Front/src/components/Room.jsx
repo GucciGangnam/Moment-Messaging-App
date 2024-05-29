@@ -148,7 +148,7 @@ export const Room = ({ currentGroupOBJ, userData }) => {
             // Handle socket disconnection
             socket.on('disconnect', () => {
                 console.log('Socket disconnected 1');
-                setSocketConnected("Offline")
+                setSocketConnected("Reconnecting . . .")
                 // Add your custom logic here for what to do when the socket disconnects
                 // For example, you could show a message to the user or attempt to reconnect
             });
