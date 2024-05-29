@@ -352,8 +352,11 @@ export const Room = ({ currentGroupOBJ, userData }) => {
                     </div>
                 </div>
 
-                <div className="Top-Right">
-                            {socketConnected}
+                <div
+                    className="Top-Right"
+                    style={{ color: socketConnected === "Online" ? "green" : "red" }}
+                >
+                    {socketConnected}
                 </div>
 
             </div>
