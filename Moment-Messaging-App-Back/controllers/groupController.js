@@ -186,42 +186,37 @@ exports.addgroupmember = asyncHandler(async (req, res, next) => {
 });
 
 exports.sendmessage = asyncHandler(async (req, res, next) => {
-    console.log("route sendMessage started")
+    const userID = req.userId;
+    const groupID = req.body.groupID; // Fixed the typo from gorupID to groupID
+    const roomName = req.body.roomName;
+    const roomCreator = req.body.roomCreator; 
+    const timestamp = new Date();
+
     try {
-        const user = req.userId;
-        const groupId = req.body.groupId;
-        const message = req.body.message;
+        // Fetch the Group object
+        const groupOBJ = await Group.findOne({ ID: groupID });
 
-        // Fetch the group details from the database
-        const group = await Group.findOne({ ID: groupId });
-
-        // Check if the group exists
-        if (!group) {
-            return res.status(404).json({ message: 'Group not found' });
+        if (!groupOBJ) {
+            return res.status(404).json({ message: "Group not found" });
         }
 
-        // Check if the user is a member of the group
-        const isMember = group.MEMBERS.some(member => member.ID === user);
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
 
-        if (!isMember) {
-            return res.status(403).json({ message: 'Forbidden: You are not a member of this group' });
+        if (!groupOBJ.ROOM_TIMER || groupOBJ.ROOM_TIMER < fiveMinutesAgo) {
+            // Update the ROOM_NAME, ROOM_CREATOR, and ROOM_TIMER fields
+            groupOBJ.ROOM_NAME = roomName;
+            groupOBJ.ROOM_CREATOR = roomCreator;
+            groupOBJ.ROOM_TIMER = timestamp;
+        } else {
+            // Only update the ROOM_TIMER field
+            groupOBJ.ROOM_TIMER = timestamp;
         }
 
-        // Find the member in the group and update their message
-        const updatedMembers = group.MEMBERS.map(member => {
-            if (member.ID === user) {
-                return { ...member, MESSAGE: message }; // Update the message for the current user
-            }
-            return member;
-        });
+        // Save the updated Group object
+        await groupOBJ.save();
 
-        // Update the group with the modified members array
-        await Group.updateOne({ ID: groupId }, { MEMBERS: updatedMembers });
-
-        // Send a success response
-        res.status(200).json({ message: 'Message sent successfully' });
+        res.status(200).json({ message: "Room information updated successfully", group: groupOBJ });
     } catch (error) {
-        // If an error occurs, pass it to the error handling middleware
         next(error);
     }
 });

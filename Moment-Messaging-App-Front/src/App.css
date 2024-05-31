@@ -49,6 +49,12 @@
   position: relative;
 }
 
+@media (max-width: 800px) {
+  .App {
+    grid-template-columns: 1fr 400px;
+  }
+}
+
 .Layout-BTN{ 
   position: absolute;
   left: 15px;

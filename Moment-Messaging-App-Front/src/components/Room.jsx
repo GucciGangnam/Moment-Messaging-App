@@ -225,10 +225,37 @@ export const Room = ({ currentGroupOBJ, userData }) => {
     }
     // Send BTN 
     // handle send message // WARNING THIS IS CAUSING A RERENDER ON EVER KEY STROKE!!!!
-    const handleSendMessage = useCallback(() => {
+    const handleSendMessage = useCallback(async () => {
         if (messageInput === "") {
             return;
         }
+            const requestOptions = {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('UserAccessToken')}`
+                },
+                body: JSON.stringify(
+                    {
+                        groupID: offlineGroupOBJ.ID,
+                        roomName: messageInput,
+                        roomCreator: (userData.userInfo.FIRST_NAME + ' ' + userData.userInfo.LAST_NAME)
+                    }
+                )
+            };
+
+            try {
+                const response = await fetch(`${backendUrl}/groups/sendmessage`, requestOptions);
+                if (!response.ok) {
+                    console.log('NOT OK')
+                    throw new Error('Network response was not ok');
+                } else {
+                    console.log("res OK");
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        //////////
         socket.emit("send-message", messageInput, userData.userInfo.ID);
         setMessageInput("");
     }, [messageInput, userData.userInfo.ID]); // Dependencies of handleSendMessage
@@ -247,10 +274,53 @@ export const Room = ({ currentGroupOBJ, userData }) => {
         };
     }, [handleSendMessage]);
 
+    // Formatted date //
+    // const formatTime = (dateString) => {
+    //     const date = new Date(dateString);
+    //     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    // };
+
     ///
     // TIMER
     ///
     // const timerStartFrom =  offlineGroupOBJ.ROOM_TIMER
+
+    const [remainingTime, setRemainingTime] = useState('inactive');
+
+    useEffect(() => {
+        if (!offlineGroupOBJ || !offlineGroupOBJ.ROOM_TIMER) {
+            return;
+        }
+
+        const intervalId = setInterval(() => {
+            const newRemainingTime = getRemainingTime(offlineGroupOBJ.ROOM_TIMER);
+            setRemainingTime(newRemainingTime);
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [offlineGroupOBJ]);
+
+    const getRemainingTime = (startTime) => {
+        const start = new Date(startTime);
+        const now = new Date();
+        const diff = now - start; // difference in milliseconds
+        const diffInSeconds = Math.floor(diff / 1000);
+        const remainingSeconds = 300 - diffInSeconds; // 300 seconds = 5 minutes
+
+        if (remainingSeconds <= 0) {
+            setOfflineGroupOBJ({
+                ...offlineGroupOBJ,
+                ROOM_CREATOR: null,
+                ROOM_NAME: null,
+                ROOM_TIMER: null,
+            });
+            return 'inactive';
+        }
+
+        const minutes = Math.floor(remainingSeconds / 60);
+        const seconds = remainingSeconds % 60;
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    };
 
 
 
@@ -346,7 +416,7 @@ export const Room = ({ currentGroupOBJ, userData }) => {
                                 Created by {offlineGroupOBJ.ROOM_CREATOR}
                             </div>
                             <div className="Room-timer">
-                                {/* // render  countdown to 0 starting from (timerStartFrom) */}
+                            {remainingTime}
                             </div>
                         </div>
                     </div>
