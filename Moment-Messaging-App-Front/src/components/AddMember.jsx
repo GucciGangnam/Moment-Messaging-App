@@ -13,6 +13,7 @@ export const AddMember = ({ userData, offlineGroupOBJ, setOfflineGroupOBJ, membe
 
     // Add member to group function
     const addMemberToGroup = async (contact) => {
+        console.log('adding memeber to group')
         const requestOptions = {
             method: 'PUT',
             headers: {

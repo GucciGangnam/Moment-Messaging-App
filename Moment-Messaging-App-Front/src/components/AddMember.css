@@ -24,6 +24,7 @@
     max-height: 400px;
     overflow-y: scroll;
     animation: openUp 0.5s ease-out;
+    z-index: 1;
 }
 
 .AddMember .Contact{ 
