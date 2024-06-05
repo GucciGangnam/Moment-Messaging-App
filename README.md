@@ -15,11 +15,21 @@ The first message sets the name of the room along with a 1 minute timer. People 
 ## Technologies
 
 JS
+
 CSS
+
 React
+
 NodeJS
+
 MongoDB
+
 Socket IO
+
+---
+## Live Link
+
+https://moment-messaging-app.vercel.app
 
 ---
 
