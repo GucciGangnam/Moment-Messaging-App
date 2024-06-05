@@ -231,12 +231,12 @@ export const Navigator = ({ toggleTheme, isDarkMode, handleLogout, userData, get
             </div>
 
             {/* SEARCH BOX */}
-            {(title === 'Contacts' || title === 'Groups') && (
+            {/* {(title === 'Contacts' || title === 'Groups') && (
                 <input
                     className="Search"
                     placeholder={`Search ${title}`}
                 />
-            )}
+            )} */}
 
             <div className="Content">
                 {title === 'Contacts' ? (
@@ -279,7 +279,7 @@ export const Navigator = ({ toggleTheme, isDarkMode, handleLogout, userData, get
                             onClick={() => setAddGroupActive(prevState => !prevState)}
                         >
                             {addGroupActive ?
-                                'Add Group BTN'
+                                'Add Group +'
                                 :
                                 <>
                                     <input

@@ -36,16 +36,6 @@ export const App = () => {
   const [clientView, setClientView] = useState('login') // login || navigator
   const [currentGroupOBJ, setCurrentGroupOBJ] = useState('')
 
-  ///////////////////////////////////////// USE EFFECT TO LOG CURRENTGROUPOBJ WHEN UPDATED
-  // useEffect(() => { 
-  //   console.log('current group OBJ next: ')
-  //   console.log(currentGroupOBJ)
-  // },[currentGroupOBJ])
-    ///////////////////////////////////////// USE EFFECT TO LOG CURRENTGROUPOBJ WHEN UPDATED
-
-
-
-
   // CLIENT ACCOUNT INFO //
   const [userData, setUserData] = useState({});
   // FETCH USER ACCOUNT INFO - Save to userData state
@@ -116,12 +106,6 @@ export const App = () => {
     }
   }
 
-///////////////////////////////////////// USE EFFECT TO LOG USERGROUPDATA WHEN UPDATED
-  // useEffect(() => { 
-  //   console.log('user group data next: ')
-  //   console.log(userGroupData)
-  // },[userGroupData])
-  ///////////////////////////////////////// USE EFFECT TO LOG USERGROUPDATA WHEN UPDATED
 
 
 
@@ -161,6 +145,16 @@ export const App = () => {
   /////////////////////////////////////////////////
 
 
+  //////// HANDLE LAYOUT CHANGE /////////
+  const [layout, setLayout] = useState('App')
+  const handleLayoutChange = () => {
+    if (layout === 'App') {
+      setLayout('App-Layout2')
+    } else {
+      setLayout('App')
+    }
+  }
+
 
 
   // LOGOUT //
@@ -171,11 +165,11 @@ export const App = () => {
   /////////////////////////////////////////////////
 
   return (
-    <div className="App">
+    <div className={layout}>
 
       {/* layout button - absolute */}
       <svg
-        onClick={() => { console.log("Layout BTN clicked") }}
+        onClick={handleLayoutChange}
         className="Layout-BTN"
         width="30px"
         height="30px"
@@ -206,11 +200,11 @@ export const App = () => {
       {clientView === 'login' || currentGroupOBJ === "" ?
         <Landing />
         :
-        <Room 
-        // Dont need to pass in currentGroupOBJ but instead need to pass in userGroupData.[which ever object has the same ID as currentGroupOBJ.ID]
-        currentGroupOBJ={currentGroupOBJ}
-        userData={userData}
-      />
+        <Room
+          // Dont need to pass in currentGroupOBJ but instead need to pass in userGroupData.[which ever object has the same ID as currentGroupOBJ.ID]
+          currentGroupOBJ={currentGroupOBJ}
+          userData={userData}
+        />
       }
     </div>
   );

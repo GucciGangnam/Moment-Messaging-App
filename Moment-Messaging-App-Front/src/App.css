@@ -49,6 +49,17 @@
   position: relative;
 }
 
+.App-Layout2 {
+  background-color: var(--app-bg);
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 0px minmax(400px, 1fr);
+  color: var(--text-color);
+  font-family: Calibri, sans-serif;
+  position: relative;
+}
+
 @media (max-width: 800px) {
   .App {
     grid-template-columns: 1fr 400px;
@@ -60,7 +71,8 @@
   left: 15px;
   top: 15px;
   fill: none;
-  stroke: var(--img-deselected)
+  stroke: var(--img-deselected);
+  z-index: 10;
 }
 
 .Layout-BTN:hover{ 

@@ -23,6 +23,9 @@ router.post('/leavegroupbyid', authenticator_controller.validateAccessToken, gro
 router.put('/addgroupmember', authenticator_controller.validateAccessToken, group_controller.addgroupmember)
 // Send Message
 router.put('/sendmessage', authenticator_controller.validateAccessToken, group_controller.sendmessage)
+// PIN Message 
+router.put('/pinmessage', authenticator_controller.validateAccessToken, group_controller.pinmessage)
+
 
 // DELETE //
 

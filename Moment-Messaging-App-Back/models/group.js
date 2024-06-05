@@ -23,6 +23,10 @@ const groupsSchema = new Schema({
         type: String,
         required: false,
     },
+    ROOM_PIN: {
+        type: String,
+        required: false,
+    },
     ADMIN: {
         ID: {
             type: String,

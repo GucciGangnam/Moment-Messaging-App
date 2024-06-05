@@ -138,12 +138,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
+    position: relative;
 }
 
 
-
 .Room .Message-div {
-    background-color: rgb(214, 230, 193);
+    background-color: var(--background-color-2);
     padding: 2px;
     border-radius: 25px;
     display: flex;
@@ -177,7 +177,7 @@
 }
 
 .Room .User-initials {
-    background-color: rgb(184, 206, 158);
+    background-color: var(--background-color);
     color: white;
     border-radius: 50%;
     aspect-ratio: 1/1;

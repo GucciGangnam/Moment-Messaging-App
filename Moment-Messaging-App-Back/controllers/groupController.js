@@ -200,9 +200,9 @@ exports.sendmessage = asyncHandler(async (req, res, next) => {
             return res.status(404).json({ message: "Group not found" });
         }
 
-        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+        const oneMinuteAgo = new Date(Date.now() - 1 * 60 * 1000);
 
-        if (!groupOBJ.ROOM_TIMER || groupOBJ.ROOM_TIMER < fiveMinutesAgo) {
+        if (!groupOBJ.ROOM_TIMER || groupOBJ.ROOM_TIMER < oneMinuteAgo) {
             // Update the ROOM_NAME, ROOM_CREATOR, and ROOM_TIMER fields
             groupOBJ.ROOM_NAME = roomName;
             groupOBJ.ROOM_CREATOR = roomCreator;
@@ -219,4 +219,25 @@ exports.sendmessage = asyncHandler(async (req, res, next) => {
     } catch (error) {
         next(error);
     }
+});
+
+// Pin Message 
+exports.pinmessage = asyncHandler(async (req, res, next) => {
+    try{ 
+    console.log(req.body.groupID)
+    console.log(req.body.pinnedMessage)
+    // Get group obj
+    const groupOBJ = await Group.findOne({ID: req.body.groupID})
+    // update groupToUpdate.ROOM_PIN to req.body.pinnedMessage
+    if (!groupOBJ) {
+        return res.status(404).json({ message: "Group not found" });
+    }
+
+    groupOBJ.ROOM_PIN = req.body.pinnedMessage
+
+    await groupOBJ.save();
+    res.status(200).json({ message: "Room information updated successfully", group: groupOBJ });
+} catch (error) { 
+    next(error);
+}
 });
