@@ -183,7 +183,21 @@ exports.user_demologin = asyncHandler(async (req, res, next) => {
                     { ID: userID },
                     { $addToSet: { CONTACTS: { $each: [receiverContact1, receiverContact2, receiverContact3] } } }
                 );
-                
+
+                ////////////////////
+                // CREATE A GROUP 
+
+
+
+
+
+
+
+
+
+
+
+
                 ////////////////////
         const payload = {
             userId: userID
