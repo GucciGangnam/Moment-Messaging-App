@@ -61,9 +61,9 @@ export const Loginsignup = ({ toggleTheme, isDarkMode, setClientView }) => {
     // Handlers for form submissions
     // STATES 
     const [signUpEmailPlaceholder, setSignUpEmailPlaceholder] = useState('Email*');
-    
+
     // FUNCTION
-    const handleSignUpSubmit = async(e) => {
+    const handleSignUpSubmit = async (e) => {
         e.preventDefault();
         if (signUpData.password === signUpData.confirmPassword) {
             console.log("Sign Up Data:", signUpData);
@@ -81,7 +81,7 @@ export const Loginsignup = ({ toggleTheme, isDarkMode, setClientView }) => {
                 if (!response.ok) {
                     console.log('Response NOT OK!')
                     console.log(responseData)
-                    setSignUpEmailPlaceholder(`${signUpData.email}` +' '+ responseData.errors[0].msg.split(' ').slice(1).join(' '));
+                    setSignUpEmailPlaceholder(`${signUpData.email}` + ' ' + responseData.errors[0].msg.split(' ').slice(1).join(' '));
                     setSignUpData((prevData) => ({
                         ...prevData,
                         email: '',
@@ -112,20 +112,47 @@ export const Loginsignup = ({ toggleTheme, isDarkMode, setClientView }) => {
             body: JSON.stringify(loginData)
         };
         try {
-        const response = await fetch(`${backendUrl}/users/login`, requestOptions);
-        const responseData = await response.json();
-        if (!response.ok){ 
-            console.log("not ok");
-            console.log(responseData)
-        } else { 
-            console.log("OK")
-            localStorage.setItem("UserAccessToken", responseData.accessToken)
-            setClientView('navigaotr')
+            const response = await fetch(`${backendUrl}/users/login`, requestOptions);
+            const responseData = await response.json();
+            if (!response.ok) {
+                console.log("not ok");
+                console.log(responseData)
+            } else {
+                console.log("OK")
+                localStorage.setItem("UserAccessToken", responseData.accessToken)
+                setClientView('navigaotr')
+            }
+        } catch (error) {
+            console.log(error);
         }
-    } catch(error){ 
-        console.log(error);
-    }
     };
+
+    const handleDemoAccountLogIn = async (e) => {
+        e.preventDefault();
+        console.log("logging in demo acc")
+        // back end fetch to logindemouser
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
+        try {
+            console.log("T1")
+            const response = await fetch(`${backendUrl}/users/demologin`, requestOptions);
+            const responseData = await response.json();
+            if (!response.ok) {
+                console.log("not ok");
+                console.log(responseData)
+            } else {
+                console.log("OK")
+                localStorage.setItem("UserAccessToken", responseData.accessToken)
+                setClientView('navigaotr')
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <div className="Loginsignup">
@@ -213,7 +240,11 @@ export const Loginsignup = ({ toggleTheme, isDarkMode, setClientView }) => {
                     <button className="Form-Sumbit-BTN" type="submit">
                         Sign Up
                     </button>
+                    <button
+                        className="Demo-account-BTN"
+                        onClick={handleDemoAccountLogIn}>Demo Account</button>
                 </form>
+
             )}
 
             {formState === "login" && (

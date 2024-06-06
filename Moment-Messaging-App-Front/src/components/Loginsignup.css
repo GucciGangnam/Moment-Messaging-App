@@ -90,6 +90,23 @@
     color: var(--main-btn-text);
 }
 
+.Loginsignup .Form-Sumbit-BTN:hover {
+    cursor: pointer;
+}
+
+.Loginsignup .Demo-account-BTN {
+    width: fit-content;
+    border-radius: 25px;
+    padding: 7px;
+    border: 1px solid var(--main-btn-bg);
+    background-color: inherit;
+    color: var(--main-btn-bg);
+}
+
+.Loginsignup .Demo-account-BTN:hover {
+    cursor: pointer;
+ }
+
 .Loginsignup .Bottom{ 
         /* outline: 1px solid blue;; */
         display: flex;

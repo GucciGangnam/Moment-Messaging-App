@@ -54,11 +54,12 @@
   width: 100vw;
   height: 100vh;
   display: grid;
-  grid-template-columns: 0px minmax(400px, 1fr);
+  grid-template-columns: 0 1fr; /* Set the left column to 0 width and the right to take the full space */
   color: var(--text-color);
   font-family: Calibri, sans-serif;
   position: relative;
 }
+
 
 @media (max-width: 800px) {
   .App {
@@ -72,7 +73,7 @@
   top: 15px;
   fill: none;
   stroke: var(--img-deselected);
-  z-index: 0;
+  z-index: 1;
 }
 
 .Layout-BTN:hover{ 

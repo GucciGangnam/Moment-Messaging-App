@@ -143,6 +143,62 @@ exports.user_login = asyncHandler(async (req, res, next) => {
     return;
 });
 
+// Demo Login 
+exports.user_demologin = asyncHandler(async (req, res, next) => {
+
+    // Create unique user ID
+    const userID = "UID" + uuidv4();
+    // Create new user
+    const newUser = new User({
+        ID: userID,
+        FIRST_NAME: "Demo",
+        LAST_NAME: "User",
+        PHONE: 555 - 555 - 555,
+        EMAIL: userID + '@demo.demo',
+        PASSWORD: 12345678,
+        IS_DEMO: true
+    })
+    try {
+        console.log(newUser);
+        await newUser.save();
+                // ADD DEMO FRIENDS
+
+                const receiverContact1 = {
+                    ID: 'UIDf57f130f-8229-4af1-a3fc-5e0a16bfed67',
+                    FIRST_NAME: 'Demo',
+                    LAST_NAME: 'Smith'
+                };
+                const receiverContact2 = {
+                    ID: 'UID23a55896-c5e2-4221-82a2-612998dfc026',
+                    FIRST_NAME: 'Demo',
+                    LAST_NAME: 'Jones'
+                };
+                const receiverContact3 = {
+                    ID: 'UID5a2130d4-2747-4e18-a830-36b30850b07a',
+                    FIRST_NAME: 'Demo',
+                    LAST_NAME: 'Doe'
+                };
+
+                await User.updateOne(
+                    { ID: userID },
+                    { $addToSet: { CONTACTS: { $each: [receiverContact1, receiverContact2, receiverContact3] } } }
+                );
+                
+                ////////////////////
+        const payload = {
+            userId: userID
+        }
+        // Send access token 
+        const secretKey = process.env.API_SECURITY_KEY;
+        const accessToken = jwt.sign(payload, secretKey, { expiresIn: '60m' })
+        res.status(200).json({ accessToken: accessToken })
+        return;
+    } catch (error) {
+        console.error("failed to create new user");
+        return res.status(500).json({ errors: [{ msg: 'Failed to create new user' }] });
+    }
+})
+
 
 // Read user
 exports.get_user_info = asyncHandler(async (req, res, next) => {

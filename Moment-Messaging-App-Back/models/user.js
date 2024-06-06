@@ -39,6 +39,10 @@ const usersSchema = new Schema({
         type: Array,
         required: false
     },
+    IS_DEMO: { 
+        type: Boolean,
+        required: false
+    }
 }, { collection: 'Users' }); // Specify the collection name here
 
 // Set the connection explicitly

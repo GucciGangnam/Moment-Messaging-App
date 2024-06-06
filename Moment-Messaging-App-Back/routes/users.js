@@ -15,6 +15,8 @@ router.post('/new', user_controller.user_create);
 router.post('/login', user_controller.user_login);
 // Auto Login user if they revisit the site with a valid access token
 router.get('/login', authenticator_controller.validateAccessTokenStandAlone)
+// DEMO ACCOUNT LOGIN USER //
+router.post('/demologin', user_controller.user_demologin)
 
 // READ //
 // get user account info //
